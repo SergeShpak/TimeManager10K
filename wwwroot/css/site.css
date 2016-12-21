@@ -42,3 +42,12 @@ textarea {
     display: none
   }
 }
+
+.btn-timer {
+    margin: 0 5px;
+}
+
+#timer-display {
+    border: 1px solid #000;
+    position: relative;
+}

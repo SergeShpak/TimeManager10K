@@ -236,4 +236,6 @@ _Pvt_Extensions
 # VIM swap files
 **/*.swp
 
+**/.vscode/
+
 wwwroot/lib
