@@ -16,12 +16,14 @@ var webroot = "./wwwroot/";
 
 var paths = {
     js: webroot + "js/**/*.js",
+    customJs: webroot + "custom-scripts/**/*.js",
     minJs: webroot + "js/**/*.min.js",
     css: webroot + "css/**/*.css",
     minCss: webroot + "css/**/*.min.css",
     concatJsDest: webroot + "js/site.min.js",
     concatCssDest: webroot + "css/site.min.css",
     bowerJsDest: webroot + "js/bower.min.js",
+    customJsDest: webroot + "js/custom-scripts.min.js",
     bootstrapCssDest: webroot + "css"
 };
 
@@ -33,7 +35,19 @@ gulp.task("clean:css", function (cb) {
     rimraf(paths.concatCssDest, cb);
 });
 
-gulp.task("clean", ["clean:js", "clean:css"]);
+gulp.task("clean:site-scripts", function(cb) {
+    rimraf(paths.customJsDest, cb);
+});
+
+gulp.task("clean:bower-scripts", function(cb) {
+    rimraf(paths.bowerJsDest, cb);
+});
+
+gulp.task("clean:bootstrap-css", function(cb) {
+    rimraf(paths.bootstrapCssDest, cb);
+});
+
+gulp.task("clean", ["clean:js", "clean:css", "clean:site-scripts", "clean:bower-scripts", "clean:bootstrap-css"]);
 
 gulp.task("min:js", function () {
     return gulp.src([paths.js, "!" + paths.minJs], { base: "." })
@@ -49,9 +63,14 @@ gulp.task("min:css", function () {
         .pipe(gulp.dest("."));
 });
 
-gulp.task("min", ["min:js", "min:css"]);
+gulp.task("min:site-scripts", function() {
+    return gulp.src(paths.customJs)
+        .pipe(concat(paths.customJsDest))
+        .pipe(uglify())
+        .pipe(gulp.dest("."))
+});
 
-gulp.task("bower:js", function() {
+gulp.task("min:bowerJs", function() {
     return gulp.src(mainBowerFiles())
         .pipe(filter("**/*.js"))
         .pipe(concat(paths.bowerJsDest))
@@ -59,7 +78,7 @@ gulp.task("bower:js", function() {
         .pipe(gulp.dest("."));
 });
 
-gulp.task("bower:bootstrapLess", function() {
+gulp.task("min:bowerBootstrapLess", function() {
     return gulp.src(mainBowerFiles())
         .pipe(filter("**/bootstrap.less"))
         .pipe(less())
@@ -70,4 +89,4 @@ gulp.task("bower:bootstrapLess", function() {
         .pipe(gulp.dest(paths.bootstrapCssDest))
 });
 
-gulp.task("bower", ["bower:js", "bower:bootstrapLess"]);
+gulp.task("min", ["min:js", "min:css", "min:site-scripts", "min:bowerJs", "min:bowerBootstrapLess"]);
