@@ -12,6 +12,8 @@ $(document).ready(function() {
     var getTimerString;
     var addZeroIfNeeded;
     var freezeClock;
+    var getInterval;
+    var setTimeLeft;
 
     addZeroIfNeeded = function(time_str) {
         if (time_str.length < 2) {
@@ -25,14 +27,11 @@ $(document).ready(function() {
     }
 
     setEndTime = function(interval) {
-        end_date = new Date();
-        end_date.setHours(end_date.getHours() + interval.getHours());
-        end_date.setMinutes(end_date.getMinutes() + interval.getMinutes());
-        end_date.setSeconds(end_date.getSeconds() + interval.getSeconds());
+        end_date = new Date().getTime() + interval;
     }
 
     updateClock = function() {
-        var diff = end_date - new Date();
+        var diff = end_date - new Date().getTime();
         if (diff <= 0) {
             changeTimerValue("Time's up!", $("#timer-display p"))
         }
@@ -59,9 +58,22 @@ $(document).ready(function() {
         return h + ":" + m + ":" + s;
     }
 
+    setTimeLeft = function() {
+        time_left = end_date - new Date().getTime();
+    }
+
     freezeClock = function() {
-        time_left = end_date - new Date();
+        setTimeLeft();
         clearInterval(timer_loop_id);
+    }
+
+    getInterval = function() {
+        var interval;
+        if (was_stopped) {
+            return time_left;
+        }
+        interval = 25 * 1000 * 60;
+        return interval;
     }
 
     $("#timer-start-btn").click(function() {
@@ -70,7 +82,7 @@ $(document).ready(function() {
             return;
         }
         is_active = true;
-        interval = new Date(0, 0, 0, 0, 25, 0, 0);
+        interval = getInterval();
         setEndTime(interval);
         updateClock();
         timer_loop_id = setInterval(updateClock, 1000);
