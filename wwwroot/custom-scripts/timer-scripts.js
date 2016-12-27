@@ -1,4 +1,4 @@
-var default_interval = 1000 * 10;
+var default_interval = 1000 * 20;
 var current_timer_value = default_interval;
 var is_active = false;
 var is_stopped = false;
@@ -49,8 +49,8 @@ generateTimerDisplay = function() {
     var seconds = current_timer_value / 1000;
     var minutes = seconds / 60;
     var hours = minutes / 60;
-    var h = Math.round(hours % 24);
-    var m = Math.round(minutes % 60);
+    var h = Math.floor(hours % 24);
+    var m = Math.floor(minutes % 60);
     var s = Math.round(seconds % 60);
     return generateTimerString(h, m, s);
 }
