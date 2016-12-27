@@ -24,6 +24,9 @@ startTimer = function() {
 }
 
 stopTimer = function() {
+    if (!is_active) {
+        return;
+    }
     clearInterval(timer_tick_id);
     is_active = false;
 }
@@ -91,9 +94,16 @@ $(document).ready(function() {
         if (!is_active) {
             return;
         }
+        stopTimer();
         is_active = false;
+        is_stopped = true;
     });
 
     $("#timer-reset-btn").click(function() {
+        stopTimer();
+        is_active = false;
+        is_stopped = false;
+        current_timer_value = default_interval;
+        setTimerDisplay();
     });
 });
