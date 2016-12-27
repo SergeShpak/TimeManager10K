@@ -4,6 +4,7 @@ $(document).ready(function() {
     var was_stopped;
     var is_active;
     var timer_loop_id;
+    var default_interval = 1000 * 10;//1000 * 60 * 25;
 
     var changeTimerValue;
     var getEndTime;
@@ -14,6 +15,16 @@ $(document).ready(function() {
     var freezeClock;
     var getInterval;
     var setTimeLeft;
+    var resetTimer;
+    var stopTimer;
+
+    stopTimer = function() {
+        clearInterval(timer_loop_id);
+        is_active = false;
+        was_stopped = false;
+        timer_string = getTimerString(0);
+        changeTimerValue(timer_string, $("#timer-display p"))
+    }
 
     addZeroIfNeeded = function(time_str) {
         if (time_str.length < 2) {
@@ -33,16 +44,19 @@ $(document).ready(function() {
     updateClock = function() {
         var diff = end_date - new Date().getTime();
         if (diff <= 0) {
-            changeTimerValue("Time's up!", $("#timer-display p"))
+            stopTimer();
         }
         timer_string = getTimerString(diff);
         changeTimerValue(timer_string, $("#timer-display p"));
     }
 
     getTimerObj = function(time) {
-        var h = Math.floor((time / (1000 * 60 * 60)) % 24);
-        var m = Math.floor((time / (1000 * 60)) % 60);
-        var s = Math.floor((time / (1000)) % 60);
+        var seconds = time / 1000;
+        var minutes = seconds / 60;
+        var hours = minutes / 60;
+        var h = Math.floor(hours % 24);
+        var m = Math.floor(minutes % 60);
+        var s = Math.floor(seconds % 60);
         return {
             "h": h,
             "m": m,
@@ -72,8 +86,18 @@ $(document).ready(function() {
         if (was_stopped) {
             return time_left;
         }
-        interval = 25 * 1000 * 60;
+        interval = default_interval;
         return interval;
+    }
+
+    resetTimer = function() {
+        if (is_active) {
+            clearInterval(timer_loop_id);
+            is_active = false;
+        }
+        was_stopped = false;
+        timer_string = getTimerString(default_interval);
+        changeTimerValue(timer_string, $("#timer-display p"));
     }
 
     $("#timer-start-btn").click(function() {
@@ -81,6 +105,7 @@ $(document).ready(function() {
         if (is_active) {
             return;
         }
+        resetTimer();
         is_active = true;
         interval = getInterval();
         setEndTime(interval);
@@ -99,5 +124,6 @@ $(document).ready(function() {
 
     $("#timer-reset-btn").click(function() {
         changeTimerValue("Timer reset", $("#timer-display p"));
+        resetTimer();
     });
 });
