@@ -19,3 +19,8 @@
     height: 50px;
     font-size: 16pt;
 }
+
+#task-set-btn {
+    height: 50px;
+    margin: 0;
+}
