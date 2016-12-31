@@ -53,6 +53,7 @@ parseTimeString = function(time_string) {
 setTimerValue = function(parsed_time_obj) {
     current_timer_value = 1000 * (parsed_time_obj.s + parsed_time_obj.m * 60 + parsed_time_obj.h * 60 * 60);
     setTimerDisplay();
+    setTimerTask(control_panel_values.task);
 }
 
 $(document).ready(function() {
@@ -60,6 +61,7 @@ $(document).ready(function() {
     $("#task-set-btn").click(function() {
         var parsed_time;
         var is_input_valid;
+        resetTimer();
         storeControlPanelValues();
         is_input_valid = validateTimeInput();
         if (!is_input_valid) {

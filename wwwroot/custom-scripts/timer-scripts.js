@@ -8,10 +8,12 @@ var timer_tick_id;
 var changeTimerValue;
 var startTimer;
 var stopTimer;
+var resetTimer;
 var updateClock;
 var generateTimerDisplay;
 var generateTimerString;
 var addZeroIfNeeded;
+var setTimerTask;
 
 changeTimerValue = function(val, el) {
     $(el).text(val);
@@ -49,9 +51,9 @@ generateTimerDisplay = function() {
     var seconds = current_timer_value / 1000;
     var minutes = seconds / 60;
     var hours = minutes / 60;
-    var h = Math.floor(hours % 24);
     var m = Math.floor(minutes % 60);
     var s = Math.round(seconds % 60);
+    var h = Math.floor(hours);
     return generateTimerString(h, m, s);
 }
 
@@ -71,7 +73,19 @@ addZeroIfNeeded = function(time_str) {
 
 setTimerDisplay = function() {
     var timer_string = generateTimerDisplay();
-    changeTimerValue(timer_string, $("#timer-display p"));
+    changeTimerValue(timer_string, $("#timer-display #timer-clock"));
+}
+
+setTimerTask = function(task) {
+    changeTimerValue(task, $("#timer-display #timer-task"));
+}
+
+resetTimer = function(task) {
+    stopTimer();
+    is_active = false;
+    is_stopped = false;
+    current_timer_value = default_interval;
+    setTimerDisplay();
 }
 
 
@@ -100,10 +114,6 @@ $(document).ready(function() {
     });
 
     $("#timer-reset-btn").click(function() {
-        stopTimer();
-        is_active = false;
-        is_stopped = false;
-        current_timer_value = default_interval;
-        setTimerDisplay();
+        resetTimer();
     });
 });
