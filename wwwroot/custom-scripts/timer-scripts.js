@@ -67,8 +67,8 @@ updateClock = function() {
     setTimerDisplay();
 }
 
-generateTimerDisplay = function() {
-    var seconds = current_timer_value / 1000;
+generateTimerDisplay = function(timer_val) {
+    var seconds = timer_val / 1000;
     var minutes = seconds / 60;
     var hours = minutes / 60;
     var m = Math.floor(minutes % 60);
@@ -92,7 +92,7 @@ addZeroIfNeeded = function(time_str) {
 }
 
 setTimerDisplay = function() {
-    var timer_string = generateTimerDisplay();
+    var timer_string = generateTimerDisplay(current_timer_value);
     changeTimerValue(timer_string, $("#timer-display #timer-clock"));
 }
 

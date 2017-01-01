@@ -42,11 +42,33 @@
                             <input type="time" class="form-control" id="task-time-input" placeholder="hh:mm:ss">
                         </div>
                         <div class="col-md-2">
-                            <input id="task-set-btn" class="btn btn-default btn-block btn-success" value="Set" />
+                            <input id="task-set-btn" class="btn btn-block btn-success" value="Set" />
                         </div>
                     </div>
                 </form>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="container" id="table-container">
+    <div class="col-md-10 col-md-offset-1">
+        <div class="table-responsive">
+                <table id="tasks-table" class="table collapsed">
+                    <thead>
+                        <tr id="tasks-table-expand-header" class="header expand">
+                            <p>Tasks history<span id="tasks-expand-btn" class="btn btn-success glyphicon glyphicon-plus"></span></p>
+                        </tr>
+                        <tr>
+                            <th>Task</th>
+                            <th>Duration</th>
+                            <th>Started</th>
+                            <th>Ended</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
         </div>
     </div>
 </div>

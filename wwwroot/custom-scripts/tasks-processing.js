@@ -4,8 +4,15 @@ var isCurrent;
 var isTask;
 var getTasks;
 var getValidTasks;
+var showTasksIfAny;
+var printValidTasks;
+var hideTable;
+var addTasksToTable;
+var getTaskName;
+var getTaskDuration;
+var getDate;
 
-var printValidTasks = function() {
+printValidTasks = function() {
     var valid_tasks = getValidTasks();
     if (0 == valid_tasks.length) {
         console.log("No tasks yet");
@@ -50,3 +57,54 @@ isCurrent = function(obj) {
         }
     return false;
 }
+
+showTasksIfAny = function() {
+    var tasks = getValidTasks();
+    if (0 == tasks.length) {
+        hideTable();
+        return;
+    }
+    addTasksToTable(tasks);
+    return;
+}
+
+hideTable = function() {
+    $("#tasks-table").toggleClass("collapsed");
+    $("#tasks-table").find("tr").toggle(300);
+}
+
+addTasksToTable = function(tasks) {
+    var tbody = $("#tasks-table > tbody");
+    var current_task;
+    var new_row;
+    var name, start_date, end_date, duration;
+    for (var i = 0; i < tasks.length; i++) {
+        current_task = tasks[i];
+        new_row = "<tr><td>" + getTaskName(current_task) + "</td><td>" + getTaskDuration(current_task) +
+                 "</td><td></td><td></td></tr>";
+        tbody.append(new_row);
+    }
+}
+
+getTaskName = function(task) {
+    var name = task.n;
+    if (null == name) {
+        return "Not specified";
+    }
+}
+
+getTaskDuration = function(task) {
+    var interval = task.i;
+    var representation = generateTimerDisplay(interval);
+    return representation;
+}
+
+
+$(document).ready(function() {
+    showTasksIfAny();
+
+    $("#tasks-expand-btn").click(function() {
+        hideTable();
+    });
+
+});
