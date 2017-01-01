@@ -23,12 +23,12 @@ saveStats = function() {
 }
 
 saveCurrentTask = function() {
-    if (!localStorage.timer_tasks) {
-        localStorage["timer_tasks"] = JSON.stringify([]);
-    }
-    tasks = JSON.parse(localStorage["timer_tasks"]);
-    tasks.push(JSON.stringify(current_task));
-    localStorage["timer_tasks"] = JSON.stringify(tasks);
+    //if (!localStorage.timer_tasks) {
+        localStorage[local_storage_tasks_key] = JSON.stringify([]);
+    //}
+    tasks = JSON.parse(localStorage[local_storage_tasks_key]);
+    tasks.push(current_task);
+    localStorage[local_storage_tasks_key] = JSON.stringify(tasks);
 }
 
 changeTimerValue = function(val, el) {

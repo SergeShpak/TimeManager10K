@@ -20,11 +20,6 @@ var getMsFromTimeObject;
 
 validateTimeInput = function() {
     var is_valid = isValidAgainstRegex(control_panel_values.time_string);
-    if (is_valid) {
-        console.log(control_panel_values.time_str, " is a valid time string");
-        return is_valid;
-    }
-    console.log(control_panel_values.time_str, " is not a valid time string");
     return is_valid;
 }
 
@@ -73,6 +68,7 @@ setTimerValue = function(parsed_time_obj) {
 $(document).ready(function() {
 
     $("#task-set-btn").click(function() {
+        printValidTasks();
         var parsed_time;
         var is_input_valid;
         resetTimer();
