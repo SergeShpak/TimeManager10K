@@ -14,6 +14,22 @@ var generateTimerDisplay;
 var generateTimerString;
 var addZeroIfNeeded;
 var setTimerTask;
+var playAlarmSound;
+var saveStats;
+var saveCurrentTask;
+
+saveStats = function() {
+    saveCurrentTask();
+}
+
+saveCurrentTask = function() {
+    if (!localStorage.timer_tasks) {
+        localStorage["timer_tasks"] = JSON.stringify([]);
+    }
+    tasks = JSON.parse(localStorage["timer_tasks"]);
+    tasks.push(JSON.stringify(current_task));
+    localStorage["timer_tasks"] = JSON.stringify(tasks);
+}
 
 changeTimerValue = function(val, el) {
     $(el).text(val);
@@ -21,6 +37,7 @@ changeTimerValue = function(val, el) {
 
 startTimer = function() {
     prev_clock_val = new Date().getTime();
+    current_task.s = prev_clock_val;
     setTimeout(updateClock, 1000);
     timer_tick_id = setInterval(updateClock, 1000);
 }
@@ -39,7 +56,10 @@ updateClock = function() {
     current_timer_value -= time_elapsed;
     prev_clock_val = current_clock_val;
     if (current_timer_value <= 0) {
+        current_task.e = current_clock_val;
         stopTimer();
+        playAlarmSound();
+        saveStats();
         current_timer_value = 0;
         setTimerDisplay();
         return;
@@ -86,6 +106,11 @@ resetTimer = function(task) {
     is_stopped = false;
     current_timer_value = default_interval;
     setTimerDisplay();
+}
+
+playAlarmSound = function() {
+    var sound = new Audio("audio/alarm.wav");
+    sound.play();
 }
 
 
