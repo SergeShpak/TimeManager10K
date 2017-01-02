@@ -11,6 +11,12 @@ var addTasksToTable;
 var getTaskName;
 var getTaskDuration;
 var getDate;
+var getDateRepresentation;
+var setTasks;
+
+setTasks = function(tasks) {
+    localStorage[local_storage_tasks_key] = JSON.stringify(tasks);
+}
 
 printValidTasks = function() {
     var valid_tasks = getValidTasks();
@@ -30,7 +36,9 @@ getTasks = function() {
 
 getValidTasks = function() {
     var tasks = getTasks();
-    return tasks.filter(isTask).filter(isCurrent);
+    var valid_tasks = tasks.filter(isTask).filter(isCurrent);
+    setTasks(valid_tasks);
+    return valid_tasks;
 }
 
 isTask = function(obj) {
@@ -80,8 +88,11 @@ addTasksToTable = function(tasks) {
     var name, start_date, end_date, duration;
     for (var i = 0; i < tasks.length; i++) {
         current_task = tasks[i];
+        start_date = current_task.s;
+        end_date = current_task.e;
         new_row = "<tr><td>" + getTaskName(current_task) + "</td><td>" + getTaskDuration(current_task) +
-                 "</td><td></td><td></td></tr>";
+                 "</td><td>" + getDateRepresentation(start_date) + "</td><td>" 
+                 + getDateRepresentation(end_date) + "</td></tr>";
         tbody.append(new_row);
     }
 }
@@ -91,12 +102,20 @@ getTaskName = function(task) {
     if (null == name) {
         return "Not specified";
     }
+    return name;
 }
 
 getTaskDuration = function(task) {
     var interval = task.i;
     var representation = generateTimerDisplay(interval);
     return representation;
+}
+
+getDateRepresentation = function(date_num) {
+    var date =  new Date(date_num);
+    var time_repr = date.toLocaleTimeString();
+    var repr = time_repr;
+    return repr;
 }
 
 

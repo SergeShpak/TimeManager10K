@@ -23,9 +23,9 @@ saveStats = function() {
 }
 
 saveCurrentTask = function() {
-    //if (!localStorage.timer_tasks) {
+    if (!localStorage.timer_tasks) {
         localStorage[local_storage_tasks_key] = JSON.stringify([]);
-    //}
+    }
     tasks = JSON.parse(localStorage[local_storage_tasks_key]);
     tasks.push(current_task);
     localStorage[local_storage_tasks_key] = JSON.stringify(tasks);
