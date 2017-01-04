@@ -14,10 +14,20 @@ var getDate;
 var getDateRepresentation;
 var setTasks;
 
+/**
+ * Clears the localStorage from the saved tasks and saves the the one passed
+ * as the argument.
+ * 
+ * @param {Object[]} tasks - Array of tasks that are saved in the localStorage.
+ */
 setTasks = function(tasks) {
     localStorage[local_storage_tasks_key] = JSON.stringify(tasks);
 }
 
+/**
+ * Prints the tasks returned by the function {@link getValidTasks} 
+ * to the console.
+ */
 printValidTasks = function() {
     var valid_tasks = getValidTasks();
     if (0 == valid_tasks.length) {
@@ -29,11 +39,20 @@ printValidTasks = function() {
     }
 }
 
+/**
+ * Returns tasks stored in the localStorage.
+ */
 getTasks = function() {
     var tasks_string = localStorage[local_storage_tasks_key];
     return JSON.parse(tasks_string);
 }
 
+/**
+ * Gets the tasks from the localStorage with the use of the {@link getTasks}
+ * function and filters them against {@link isTaks} and {@link isCurrent}.
+ * Returns the filtering result. It also deletes the tasks, that were filtered 
+ * out, from the localStorage.
+ */
 getValidTasks = function() {
     var tasks = getTasks();
     var valid_tasks = tasks.filter(isTask).filter(isCurrent);
