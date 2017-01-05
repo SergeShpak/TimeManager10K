@@ -60,6 +60,14 @@ getValidTasks = function() {
     return valid_tasks;
 }
 
+/**
+ * Predicate function that defines whether the passed object is a task or not.
+ * Particularly, it checks if the passed object has all the properties 
+ * of a task: name, interval, start date and end date -, and does not have
+ * any other ones.
+ * 
+ * @param {Object} obj - Object that is checked to be a task.
+ */
 isTask = function(obj) {
     var props = Object.getOwnPropertyNames(obj).sort();
     var expected_props = ["e", "i", "n", "s"];
@@ -74,6 +82,12 @@ isTask = function(obj) {
     return true;
 }
 
+/**
+ * Predicate function that checks if the given task is still fresh.
+ * Particularly, it checks if the end date of the task is today.
+ * 
+ * @param {Object} obj - Task which end date is checked.
+ */
 isCurrent = function(obj) {
     var end_date = new Date(obj.e);
     var current_date = new Date();
