@@ -1,3 +1,13 @@
+body {
+    font-family: 'Raleway', sans-serif;
+}
+
+#timer-task {
+    margin: 0;
+    text-align: center;
+    font-size: 48pt;
+}
+
 #timer-display p {
     text-align: center;
     font-size: 48pt;
@@ -24,4 +34,13 @@
 #task-set-btn {
     height: 50px;
     margin: 0;
+}
+
+#tasks-table-text {
+    font-size: 14pt;
+    text-align: right;
+}
+
+#tasks-expand-btn {
+    margin-right: 0;
 }

@@ -7,18 +7,18 @@
 <script src="~/custom-scripts/tasks-processing.js"></script>
 
 <div class="container" id="timer">
-    <div class="col-md-8 col-md-offset-2">
+    <div class="col-md-10 col-md-offset-1">
         <div class="row">
-                <div class="center-block" id="timer-display">
-                    <div class="col-md-8 col-md-offset-2">
-                        <div class="row">
-                            <p id="timer-task"></p>
-                        </div>
-                        <div class="row">
-                            <p id="timer-clock"></p>
-                        </div>
+            <p id="timer-task"></p>
+        </div>
+        <div class="row">
+            <div class="center-block" id="timer-display">
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="row">
+                        <p id="timer-clock"></p>
                     </div>
                 </div>
+            </div>
         </div>
         <div class="row">
             <div class="text-center" id="timer-controls"> 
@@ -57,7 +57,7 @@
                 <table id="tasks-table" class="table collapsed">
                     <thead>
                         <tr id="tasks-table-expand-header" class="header expand">
-                            <p>Tasks history<span id="tasks-expand-btn" class="btn btn-success glyphicon glyphicon-plus"></span></p>
+                            <p id="tasks-table-text">Tasks history<span id="tasks-expand-btn" class="btn btn-success glyphicon glyphicon-plus"></span></p>
                         </tr>
                         <tr>
                             <th>Task</th>

@@ -161,7 +161,7 @@ setTimerDisplay = function() {
  * @param {string} task - task name to show on the timer display. 
  */
 setTimerTask = function(task) {
-    changeElementText(task, $("#timer-display #timer-task"));
+    changeElementText(task, $("#timer-task"));
 }
 
 /** Stops the timer and sets it (along with the display) to the previous or default value. */
