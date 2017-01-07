@@ -99,6 +99,11 @@ isCurrent = function(obj) {
     return false;
 }
 
+/**
+ * If there are no valid tasks in the localStorage, hides the tasks table.
+ * If there are adds them to the tasks table, using the {@link addTasksToTable}
+ * function. 
+ */
 showTasksIfAny = function() {
     var tasks = getValidTasks();
     if (0 == tasks.length) {
@@ -114,6 +119,11 @@ hideTable = function() {
     $("#tasks-table").find("tr").toggle(300);
 }
 
+/**
+ * Adds tasks in the given tasks array to the tasks table.
+ * 
+ * @param {Object[]} tasks - Array of tasks to be added to the tasks table.
+ */
 addTasksToTable = function(tasks) {
     var tbody = $("#tasks-table > tbody");
     var current_task;
