@@ -140,6 +140,11 @@ addTasksToTable = function(tasks) {
     }
 }
 
+/**
+ * Given a task returns its name.
+ * 
+ * @param {Object} task - Task which name is returned.
+ */
 getTaskName = function(task) {
     var name = task.n;
     if (null == name) {
@@ -148,12 +153,22 @@ getTaskName = function(task) {
     return name;
 }
 
+/**
+ * Given a task returns the time interval that corresponds to its duration.
+ * 
+ * @param {Object} task - Task which duration is returned.
+ */
 getTaskDuration = function(task) {
     var interval = task.i;
     var representation = generateTimerDisplay(interval);
     return representation;
 }
 
+/**
+ * Given a time interval returns its readable representation.
+ * 
+ * @param {number} date_num - Time interval which representation is returned.
+ */
 getDateRepresentation = function(date_num) {
     var date =  new Date(date_num);
     var time_repr = date.toLocaleTimeString();
