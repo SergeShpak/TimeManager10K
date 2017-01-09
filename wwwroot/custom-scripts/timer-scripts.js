@@ -98,7 +98,7 @@ updateClock = function() {
  * Sets current timer value to zero and outputs it to the timer's display.
  */
 finishTimer = function() {
-    current_task.e = current_clock_val;
+    current_task.e = new Date().getTime();
     stopTimer();
     playAlarmSound();
     saveStats();

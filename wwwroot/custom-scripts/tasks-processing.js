@@ -13,6 +13,8 @@ var getTaskDuration;
 var getDate;
 var getDateRepresentation;
 var setTasks;
+var collapseTable;
+var toggleTasksButton;
 
 /**
  * Clears the localStorage from the saved tasks and saves the the one passed
@@ -115,8 +117,10 @@ showTasksIfAny = function() {
 }
 
 hideTable = function() {
-    $("#tasks-table").toggleClass("collapsed");
-    $("#tasks-table").find("tr").toggle(300);
+    var tasks_table_el = $("#tasks-table");
+    tasks_table_el.toggleClass("collapsed");
+    tasks_table_el.find("tr").toggle(300);
+    toggleTasksButton();
 }
 
 /**
@@ -176,8 +180,28 @@ getDateRepresentation = function(date_num) {
     return repr;
 }
 
+collapseTable = function() {
+    var tasks_table_el = $("#tasks-table");
+    var collapsed_class = "collapsed";
+    if (tasks_table_el.hasClass(collapsed_class)) {
+        return;
+    }
+    tasks_table_el.addClass(collapsed_class);
+    tasks_table_el.toggle();
+    toggleTasksButton();
+}
+
+toggleTasksButton = function() {
+    var tasks_expand_btn_el = $("#tasks-expand-btn");
+    tasks_expand_btn_el.toggleClass("btn-success");
+    tasks_expand_btn_el.toggleClass("glyphicon-plus");
+    tasks_expand_btn_el.toggleClass("btn-danger");
+    tasks_expand_btn_el.toggleClass("glyphicon-minus");
+}
+
 
 $(document).ready(function() {
+    collapseTable();
     showTasksIfAny();
 
     $("#tasks-expand-btn").click(function() {
