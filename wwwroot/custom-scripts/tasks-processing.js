@@ -1,4 +1,6 @@
 var local_storage_tasks_key = "timer_tasks";
+var tasks_table_selector = "#tasks-table";
+var tasks_table_body_selector = tasks_table_selector + " > tbody";
 
 var isCurrent;
 var isTask;
@@ -15,6 +17,7 @@ var getDateRepresentation;
 var setTasks;
 var collapseTable;
 var toggleTasksButton;
+var extractTasksFromTable;
 
 /**
  * Clears the localStorage from the saved tasks and saves the the one passed
@@ -117,7 +120,7 @@ showTasksIfAny = function() {
 }
 
 hideTable = function() {
-    var tasks_table_el = $("#tasks-table");
+    var tasks_table_el = $(tasks_table_selector);
     tasks_table_el.toggleClass("collapsed");
     tasks_table_el.find("tr").toggle(300);
     toggleTasksButton();
@@ -129,7 +132,7 @@ hideTable = function() {
  * @param {Object[]} tasks - Array of tasks to be added to the tasks table.
  */
 addTasksToTable = function(tasks) {
-    var tbody = $("#tasks-table > tbody");
+    var tbody = $(tasks_table_body_selector);
     var current_task;
     var new_row;
     var name, start_date, end_date, duration;
@@ -137,9 +140,10 @@ addTasksToTable = function(tasks) {
         current_task = tasks[i];
         start_date = current_task.s;
         end_date = current_task.e;
-        new_row = "<tr><td>" + getTaskName(current_task) + "</td><td>" + getTaskDuration(current_task) +
-                 "</td><td>" + getDateRepresentation(start_date) + "</td><td>" 
-                 + getDateRepresentation(end_date) + "</td></tr>";
+        new_row = "<tr><td>" + getTaskName(current_task) + "</td><td>" +
+                    getTaskDuration(current_task) + "</td><td>" + 
+                    getDateRepresentation(start_date) + "</td><td>" +
+                    getDateRepresentation(end_date) + "</td></tr>";
         tbody.append(new_row);
     }
 }
@@ -181,7 +185,7 @@ getDateRepresentation = function(date_num) {
 }
 
 collapseTable = function() {
-    var tasks_table_el = $("#tasks-table");
+    var tasks_table_el = $(tasks_table_selector);
     var collapsed_class = "collapsed";
     if (tasks_table_el.hasClass(collapsed_class)) {
         return;
@@ -189,6 +193,13 @@ collapseTable = function() {
     tasks_table_el.addClass(collapsed_class);
     tasks_table_el.toggle();
     toggleTasksButton();
+}
+
+extractTasksFromTable = function() {
+    var indices = [];
+    $(tasks_table_body_selector + " > tr").each(function(index) {
+        indices.push(index);
+    });
 }
 
 toggleTasksButton = function() {
