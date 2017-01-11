@@ -20,6 +20,7 @@ var toggleTasksButton;
 var extractTasksFromTable;
 var parseTaskRow;
 var parceInaccurateTimeString;
+var addToTable;
 
 /**
  * Clears the localStorage from the saved tasks and saves the the one passed
@@ -134,20 +135,22 @@ hideTable = function() {
  * @param {Object[]} tasks - Array of tasks to be added to the tasks table.
  */
 addTasksToTable = function(tasks) {
-    var tbody = $(tasks_table_body_selector);
     var current_task;
-    var new_row;
-    var name, start_date, end_date, duration;
     for (var i = 0; i < tasks.length; i++) {
         current_task = tasks[i];
-        start_date = current_task.s;
-        end_date = current_task.e;
-        new_row = "<tr><td>" + getTaskName(current_task) + "</td><td>" +
-                    getTaskDuration(current_task) + "</td><td>" + 
+        addToTable(current_task);
+    }
+}
+
+addToTable = function(task) {
+    var tbody = $(tasks_table_body_selector);
+    var start_date = task.s;
+    var end_date = task.e;
+    var new_row = "<tr><td>" + getTaskName(task) + "</td><td>" +
+                    getTaskDuration(task) + "</td><td>" + 
                     getDateRepresentation(start_date) + "</td><td>" +
                     getDateRepresentation(end_date) + "</td></tr>";
-        tbody.append(new_row);
-    }
+    tbody.append(new_row);
 }
 
 /**

@@ -39,8 +39,7 @@ saveCurrentTask = function() {
     tasks = JSON.parse(localStorage[local_storage_tasks_key]);
     tasks.push(current_task);
     localStorage[local_storage_tasks_key] = JSON.stringify(tasks);
-    // TODO: change to adding single task
-    showTasksIfAny();
+    addToTable(current_task);
 }
 
 /**
