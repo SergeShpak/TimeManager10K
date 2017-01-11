@@ -79,6 +79,7 @@ parseTimeString = function(time_string) {
     };
 }
 
+// TODO: create time_obj class (used in tasks-processing.js)
 /**
  * Given an object that contains hours, minutes and seconds fields, returns
  * a corresponding time interval in milliseconds.

@@ -18,6 +18,8 @@ var setTasks;
 var collapseTable;
 var toggleTasksButton;
 var extractTasksFromTable;
+var parseTaskRow;
+var parceInaccurateTimeString;
 
 /**
  * Clears the localStorage from the saved tasks and saves the the one passed
@@ -196,10 +198,47 @@ collapseTable = function() {
 }
 
 extractTasksFromTable = function() {
-    var indices = [];
+    var tasks = [];
     $(tasks_table_body_selector + " > tr").each(function(index) {
-        indices.push(index);
+        var task = parseTaskRow(this);
+        tasks.push(task);
     });
+    return tasks;
+}
+
+parseTaskRow = function(row_el) {
+    var cells = $(row_el).children().filter(function() {
+        return $(this).is("td");
+    });
+    var task = {
+        n: null,
+        i: null,
+        s: null,
+        e: null
+    };
+    var task_times = [];
+    var time_cells = cells.slice(1);
+    var inaccurate_time;
+    task.n = cells[0].textContent;
+    for (var i = 0; i < time_cells.length; i++) {
+        inaccurate_time = parceInaccurateTimeString(time_cells[i].textContent);
+        task_times.push(inaccurate_time);
+    }
+    task.i = task_times[0];
+    task.s = task_times[1];
+    task.e = task_times[2];
+    return task;
+}
+
+parceInaccurateTimeString = function(time_str) {
+    var time_parts = time_str.split(":").map(function(time_part_str) {
+        return parseInt(time_part_str);
+    });
+    var time_obj = {};
+    time_obj.h = time_parts[0];
+    time_obj.m = time_parts[1];
+    time_obj.s = time_parts[2];
+    return getMsFromTimeObject(time_obj);
 }
 
 toggleTasksButton = function() {
