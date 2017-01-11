@@ -21,6 +21,7 @@ var extractTasksFromTable;
 var parseTaskRow;
 var parceInaccurateTimeString;
 var addToTable;
+var addRowToTasksTable;
 
 /**
  * Clears the localStorage from the saved tasks and saves the the one passed
@@ -143,13 +144,19 @@ addTasksToTable = function(tasks) {
 }
 
 addToTable = function(task) {
+    var task_name = getTaskName(task);
+    var task_duration = getTaskDuration(task);
+    var start_date = getDateRepresentation(task.s);
+    var end_date = getDateRepresentation(task.e);
+    addRowToTasksTable(task_name, task_duration, start_date, end_date);
+}
+
+addRowToTasksTable = function(task_name, task_duration, start_date, end_date) {
     var tbody = $(tasks_table_body_selector);
-    var start_date = task.s;
-    var end_date = task.e;
-    var new_row = "<tr><td>" + getTaskName(task) + "</td><td>" +
-                    getTaskDuration(task) + "</td><td>" + 
-                    getDateRepresentation(start_date) + "</td><td>" +
-                    getDateRepresentation(end_date) + "</td></tr>";
+    var delete_button_el = "<span class='glyphicon glyphicon-remove'></span>";
+    var new_row = "<tr><td>" + task_name + "</td><td>" + task_duration + 
+                    "</td><td>" + start_date + "</td><td>" + end_date + 
+                    "</td><td>" + delete_button_el + "</td></tr>";
     tbody.append(new_row);
 }
 

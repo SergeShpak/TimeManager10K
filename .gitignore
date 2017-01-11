@@ -235,12 +235,16 @@ _Pvt_Extensions
 
 # VIM swap files
 **/*.swp
+**/*.swo
 
 # Visual Studio Code files
 **/.vscode/
 
 # Files fetched by bower
 wwwroot/lib
+
+# Fonts fetched by bower
+wwwroot/fonts
 
 # Minified JS files that are produced by gulp
 **/*.min.js

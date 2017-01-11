@@ -24,7 +24,8 @@ var paths = {
     concatCssDest: webroot + "css/site.min.css",
     bowerJsDest: webroot + "js/bower.min.js",
     customJsDest: webroot + "js/custom-scripts.min.js",
-    bootstrapCssDest: webroot + "css"
+    bootstrapCssDest: webroot + "css",
+    fontsDir: webroot + "fonts"
 };
 
 gulp.task("clean:js", function (cb) {
@@ -86,7 +87,12 @@ gulp.task("min:bowerBootstrapLess", function() {
         .pipe(rename({
             suffix: ".min"
         }))
-        .pipe(gulp.dest(paths.bootstrapCssDest))
+        .pipe(gulp.dest(paths.bootstrapCssDest));
 });
 
 gulp.task("min", ["min:js", "min:css", "min:site-scripts", "min:bowerJs", "min:bowerBootstrapLess"]);
+
+gulp.task("bfonts", function() {
+    return gulp.src(webroot + "lib/bootstrap/dist/fonts/*")
+        .pipe(gulp.dest(paths.fontsDir));
+});
