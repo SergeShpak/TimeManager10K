@@ -1,6 +1,7 @@
 var local_storage_tasks_key = "timer_tasks";
 var tasks_table_selector = "#tasks-table";
 var tasks_table_body_selector = tasks_table_selector + " > tbody";
+var collapsed_class = "collapsed";
 
 var isCurrent;
 var isTask;
@@ -22,6 +23,7 @@ var parseTaskRow;
 var parceInaccurateTimeString;
 var addToTable;
 var addRowToTasksTable;
+var isTasksTableCollapsed;
 
 /**
  * Clears the localStorage from the saved tasks and saves the the one passed
@@ -125,7 +127,7 @@ showTasksIfAny = function() {
 
 hideTable = function() {
     var tasks_table_el = $(tasks_table_selector);
-    tasks_table_el.toggleClass("collapsed");
+    tasks_table_el.toggleClass(collapsed_class);
     tasks_table_el.find("tr").toggle(300);
     toggleTasksButton();
 }
@@ -143,6 +145,11 @@ addTasksToTable = function(tasks) {
     }
 }
 
+isTasksTableCollapsed = function() {
+    var tasks_table_el = $(tasks_table_selector);
+    return tasks_table_el.hasClass(collapsed_class);
+}
+
 addToTable = function(task) {
     var task_name = getTaskName(task);
     var task_duration = getTaskDuration(task);
@@ -153,11 +160,15 @@ addToTable = function(task) {
 
 addRowToTasksTable = function(task_name, task_duration, start_date, end_date) {
     var tbody = $(tasks_table_body_selector);
-    var delete_button_el = "<span class='glyphicon glyphicon-remove'></span>";
+    var delete_button_el =
+             "<span class='remove-task-btn glyphicon glyphicon-remove'></span>";
     var new_row = "<tr><td>" + task_name + "</td><td>" + task_duration + 
                     "</td><td>" + start_date + "</td><td>" + end_date + 
                     "</td><td>" + delete_button_el + "</td></tr>";
     tbody.append(new_row);
+    if (isTasksTableCollapsed()) {
+        // TODO: find last row and hide it
+    }
 }
 
 /**
@@ -198,11 +209,20 @@ getDateRepresentation = function(date_num) {
 
 collapseTable = function() {
     var tasks_table_el = $(tasks_table_selector);
-    var collapsed_class = "collapsed";
     if (tasks_table_el.hasClass(collapsed_class)) {
         return;
     }
     tasks_table_el.addClass(collapsed_class);
+    tasks_table_el.toggle();
+    toggleTasksButton();
+}
+
+showTable = function() {
+    var tasks_table_el = $(tasks_table_selector);
+    if (!tasks_table_el.hasClass(collapsed_class)) {
+        return;
+    }
+    tasks_table_el.toggleClass(collapsed_class);
     tasks_table_el.toggle();
     toggleTasksButton();
 }

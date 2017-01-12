@@ -33,6 +33,7 @@ saveStats = function() {
  * 
  */
 saveCurrentTask = function() {
+    var tasks;
     if (!localStorage.timer_tasks) {
         localStorage[local_storage_tasks_key] = JSON.stringify([]);
     }
