@@ -1,5 +1,8 @@
 var local_storage_tasks_key = "timer_tasks";
 var tasks_table_selector = "#tasks-table";
+var tasks_button_selector = "#tasks-expand-btn";
+var btn_expandable_class = "expandable";
+var btn_collapsable_class = "collapsable";
 var tasks_table_body_selector = tasks_table_selector + " > tbody";
 var collapsed_class = "collapsed";
 
@@ -24,6 +27,15 @@ var parceInaccurateTimeString;
 var addToTable;
 var addRowToTasksTable;
 var isTasksTableCollapsed;
+var showWholeTable;
+var hideWholeTable;
+var showTasksRows;
+var hideTasksRows;
+var changeTasksButtonToExpandable;
+var changeTasksButtonToCollapsable;
+var updateTasksTable;
+var getTasksNotInTable;
+var isTaskInArray;
 
 /**
  * Clears the localStorage from the saved tasks and saves the the one passed
@@ -167,7 +179,7 @@ addRowToTasksTable = function(task_name, task_duration, start_date, end_date) {
                     "</td><td>" + delete_button_el + "</td></tr>";
     tbody.append(new_row);
     if (isTasksTableCollapsed()) {
-        // TODO: find last row and hide it
+        tbody.find("tr").last().hide();
     }
 }
 
@@ -227,6 +239,51 @@ showTable = function() {
     toggleTasksButton();
 }
 
+showWholeTable = function() {
+    showTasksRows();
+    changeTasksButtonToCollapsable();
+}
+
+hideWholeTable = function() {
+    hideTasksRows();
+    changeTasksButtonToExpandable();
+}
+
+showTasksRows = function() {
+    var tasks_table_el = $(tasks_table_selector);
+    if (!tasks_table_el.hasClass(collapsed_class)) {
+        return;
+    }
+    tasks_table_el.toggleClass(collapsed_class);
+    tasks_table_el.toggle();
+}
+
+changeTasksButtonToCollapsable = function() {
+    var tasks_btn_el = $(tasks_button_selector);
+    // If the table is already shown and the button folds it
+    if (tasks_btn_el.hasClass(btn_collapsable_class)) {
+        return;
+    }
+    toggleTasksButton();
+}
+
+hideTasksRows = function() {
+    var tasks_table_el = $(tasks_table_selector);
+    if (tasks_table_el.hasClass(collapsed_class)) {
+        return;
+    }
+    tasks_table_el.toggleClass(collapsed_class);
+    tasks_table_el.toggle();
+}
+
+changeTasksButtonToExpandable = function() {
+    var tasks_btn_el = $(tasks_button_selector);
+    if (tasks_btn_el.hasClass(btn_expandable_class)) {
+        return;
+    }
+    toggleTasksButton();
+}
+
 extractTasksFromTable = function() {
     var tasks = [];
     $(tasks_table_body_selector + " > tr").each(function(index) {
@@ -273,16 +330,48 @@ parceInaccurateTimeString = function(time_str) {
 
 toggleTasksButton = function() {
     var tasks_expand_btn_el = $("#tasks-expand-btn");
+    tasks_expand_btn_el.toggleClass(btn_collapsable_class);
+    tasks_expand_btn_el.toggleClass(btn_expandable_class);
     tasks_expand_btn_el.toggleClass("btn-success");
     tasks_expand_btn_el.toggleClass("glyphicon-plus");
     tasks_expand_btn_el.toggleClass("btn-danger");
     tasks_expand_btn_el.toggleClass("glyphicon-minus");
 }
 
+updateTasksTable = function() {
+    var tasks_in_table = extractTasksFromTable();
+    var tasks_in_storage = getTasks();
+    var tasks_not_in_table = 
+            getTasksNotInTable(tasks_in_table, tasks_in_storage);
+    for (var i = 0; i < tasks_not_in_table.length; i++) {
+        addToTable(tasks_not_in_table[i]);
+    }
+}
+
+getTasksNotInTable = function(tasks_in_table, tasks_in_storage) {
+    var is_in_table;
+    var current_task;
+    if (0 == tasks_in_table.length) {
+        return tasks_in_storage;
+    }
+    var not_in_table = [];
+    for (var i = 0; i < tasks_in_storage.length; i++) {
+        current_task = tasks_in_storage[i];
+        is_in_table = isTaskInArray(current_task, tasks_in_table);
+        if (!is_in_table) {
+            not_in_table.push(current_task);
+        }
+    }
+    return not_in_table;
+}
+
+isTaskInArray = function(task, tasks_array) {
+    
+}
 
 $(document).ready(function() {
-    collapseTable();
-    showTasksIfAny();
+    hideWholeTable();
+    updateTasksTable();
 
     $("#tasks-expand-btn").click(function() {
         hideTable();
