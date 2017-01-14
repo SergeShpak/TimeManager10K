@@ -36,6 +36,7 @@ var changeTasksButtonToCollapsable;
 var updateTasksTable;
 var getTasksNotInTable;
 var isTaskInArray;
+var compareTasks;
 
 /**
  * Clears the localStorage from the saved tasks and saves the the one passed
@@ -366,7 +367,34 @@ getTasksNotInTable = function(tasks_in_table, tasks_in_storage) {
 }
 
 isTaskInArray = function(task, tasks_array) {
+    var compare_result;
+    var current_task_in_memory;
+    for (var i = 0; i < tasks_array.length; i++) {
+        current_task_in_memory = normalizeTask(tasks_array[i]);
+        compare_result = compareTasks(task, current_task_in_memory);
+        if (!compare_result) {
+            return true;
+        }
+    }
+    return false;
+}
+
+//TODO: change to usage of the task object
+normalizeTask = function(task) {
+    var normalized_task = {
+        n: null,
+        i: null,
+        s: null,
+        e: null
+    };
+    var inaccurate_interval = getInaccurateTimeObject(task.i);
+    var inaccurate_start = getInaccurateTimeObject(task.s);
+    normalized_task.n = task.n;
     
+}
+
+compareTasks = function(first, second) {
+
 }
 
 $(document).ready(function() {

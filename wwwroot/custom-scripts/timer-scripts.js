@@ -18,6 +18,7 @@ var playAlarmSound;
 var saveStats;
 var saveCurrentTask;
 var finishTimer;
+var getInaccurateTimeObject;
 
 /**
  * Saves all the relevant information of the passed timer period:
@@ -116,25 +117,29 @@ finishTimer = function() {
  * @param {number} timer_val - time value in milliseconds to be represented.
  */
 generateTimerDisplay = function(timer_val) {
+    var inaccurate_time_obj = getInaccurateTimeObject(timer_val);
+    return generateTimerString(inaccurate_time_obj);
+}
+
+getInaccurateTimeObject = function(time_val) {
     var seconds = timer_val / 1000;
     var minutes = seconds / 60;
     var hours = minutes / 60;
-    var m = Math.floor(minutes % 60);
-    var s = Math.round(seconds % 60);
-    var h = Math.floor(hours);
-    return generateTimerString(h, m, s);
+    return {
+        h: Math.floor(hours),
+        m: Math.floor(minutes % 60),
+        s: Math.floor(seconds)
+    };
 }
 
 /**
  * Represents given time as a string of the format hh:mm:ss.
- * @param {number} hours - number of hours in the given time value.
- * @param {number} minutes - number of minutes in the given time value.
- * @param {number} seconds - number of seconds in the given time value.
+ * TODO: add inaccurate_time_obj description
  */
-generateTimerString = function(hours, minutes, seconds) {
-    var hours_str = addZeroIfNeeded(hours.toString());
-    var minutes_str = addZeroIfNeeded(minutes.toString());
-    var seconds_str = addZeroIfNeeded(seconds.toString());
+generateTimerString = function(inaccurate_time_obj) {
+    var hours_str = addZeroIfNeeded(inaccurate_time_obj.h.toString());
+    var minutes_str = addZeroIfNeeded(inaccurate_time_obj.m.toString());
+    var seconds_str = addZeroIfNeeded(inaccurate_time_obj.s.toString());
     return hours_str + ":" + minutes_str + ":" + seconds_str;
 }
 
