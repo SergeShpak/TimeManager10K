@@ -389,6 +389,7 @@ normalizeTask = function(task) {
     };
     var inaccurate_interval = getInaccurateTimeObject(task.i);
     var inaccurate_start = getInaccurateTimeObject(task.s);
+    var inaccurate_end = getInaccurateTimeObject(task.e);
     normalized_task.n = task.n;
     
 }
