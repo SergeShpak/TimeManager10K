@@ -1,4 +1,4 @@
-function Task(name, interval, startTime, endTime) {
+function Task(name, interval, start_time, end_time) {
     var err_msg;
     if (typeof name !== 'string' || typeof interval !== 'number'
         || typeof start_time !== 'number' || typeof end_time !== 'number') {
@@ -21,6 +21,15 @@ function Task(name, interval, startTime, endTime) {
     }
     this.name = name;
     this.interval = interval;
-    this.startTime = startTime;
-    this.endTime = endTime;
+    this.start_time = start_time;
+    this.end_time = end_time;
+};
+
+Task.prototype.stringifyStartTime = function() {
+
+};
+
+//TODO: change to use a closure instead of a "private" function
+Task.prototype._stringifyTime = function(time_val) {
+    
 };
