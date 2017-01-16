@@ -20,16 +20,23 @@ function Task(name, interval, start_time, end_time) {
         throw new TypeError(err_msg);
     }
     this.name = name;
-    this.interval = interval;
-    this.start_time = start_time;
-    this.end_time = end_time;
+    this.interval = TimeObject(interval);
+    this.start_time = TimeObject(start_time);
+    this.end_time = TimeObject(end_time);
 };
 
-Task.prototype.stringifyStartTime = function() {
-
-};
-
-//TODO: change to use a closure instead of a "private" function
-Task.prototype._stringifyTime = function(time_val) {
-    
+Task.compare = function(first, second) {
+    var interval_comparison = 
+        TimeObject.compare(first.interval, second.interval);
+    var start_time_comparison = 
+        TimeObject.compare(first.start_time, second.start_time);
+    var end_time_comparison = 
+        TimeObject.compare(first.end_time, second.end_time);
+    if (first.name == second.name 
+        && !interval_comparison && !start_time_comparison 
+        && !end_time_comparison) {
+            return 0;
+    }
+    return interval_comparison || first.name.localeCompare(second.name)
+            || start_time_comparison || end_time_comparison;
 };

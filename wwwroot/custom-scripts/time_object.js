@@ -44,12 +44,12 @@ function TimeObject(time_val) {
     }
     if ("number" === typeof time_val) {
         initialiseFromNumber(time_val);
-        return;
+        
     }
-    if ("string" === typeof(time_val)) {
+    if ("string" === typeof time_val) {
         initialiseFromString(time_val);
-        return;
     }
+    this.total_seconds = this.hours * 3600 + this.minutes * 60 + this.seconds;
 };
 
 TimeObject.parseMsTime = function(time_val) {
@@ -70,12 +70,16 @@ TimeObject.parseTimeString = function(time_string) {
         m: time_parts[1].toString(),
         s: time_parts[2].toString()
     };
-}
+};
 
 TimeObject.isValidTimeString = function(time_str) {
     var is_valid = 
             /^([0-9]{1,2}:)?([0-5]?[0-9]:)?([0-5]?[0-9])$/.test(time_str);
     return is_valid;
+};
+
+TimeObject.compare = function(first, second) {
+    return first.total_seconds - second.total_seconds;
 };
 
 TimeObject.prototype.toString = function() {
