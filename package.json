@@ -19,5 +19,8 @@
     "gulp-util": "3.0.7",
     "gulp-less": "3.3.0",
     "gulp-rename": "1.2.2"
+  },
+  "scripts": {
+    "test": "mocha ./wwwroot/test/*.js"
   }
 }

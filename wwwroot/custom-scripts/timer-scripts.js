@@ -1,9 +1,15 @@
-var default_interval = 1000 * 20;
-var current_timer_value = default_interval;
+var default_interval = new TimeObject("25:00");
+var current_timer_value = new TimeObject(default_interval.getTotalSeconds * 1000);
 var is_active = false;
 var is_stopped = false;
 var prev_clock_val;
 var timer_tick_id;
+var task_storage = {
+    name: null,
+    iterval: null,
+    start_time: null,
+    end_time: null
+};
 
 var changeElementText;
 var startTimer;
@@ -59,8 +65,8 @@ changeElementText = function(text_to_set, el) {
  * and time. Sets the function {@link updateClock} to be run every 1000 milliseconds.
  */
 startTimer = function() {
-    prev_clock_val = new Date().getTime();
-    current_task.s = prev_clock_val;
+    prev_clock_val = new TimeObject(new Date().getTime());
+    task_storage.start_time = prev_clock_val;
     setTimeout(updateClock, 1000);
     timer_tick_id = setInterval(updateClock, 1000);
 }
@@ -85,11 +91,11 @@ stopTimer = function() {
  * runs the function {@link finishTimer}.
  */
 updateClock = function() {
-    var current_clock_val = new Date().getTime();
-    var time_elapsed = current_clock_val - prev_clock_val;
-    current_timer_value -= time_elapsed;
+    var current_clock_val = new TimeObject(new Date().getTime());
+    var time_elapsed = current_clock_val.sub(prev_clock_val);
+    current_timer_value = current_timer_value.sub(time_elapsed);
     prev_clock_val = current_clock_val;
-    if (current_timer_value <= 0) {
+    if (current_timer_value.getTotalSeconds() <= 0) {
         finishTimer();
     }
     setTimerDisplay();
@@ -101,7 +107,8 @@ updateClock = function() {
  * Sets current timer value to zero and outputs it to the timer's display.
  */
 finishTimer = function() {
-    current_task.e = new Date().getTime();
+    task_storage.end_time = new TimeObject(new Date().getTime());
+    // TODO: continue
     stopTimer();
     playAlarmSound();
     saveStats();
@@ -110,57 +117,10 @@ finishTimer = function() {
     return;
 }
 
-/**
- * Returns a string representation of the time value given in milliseconds.
- * The result representation is a string generated with the use of {@link generateTimerString}
- * function.
- * @param {number} timer_val - time value in milliseconds to be represented.
- */
-generateTimerDisplay = function(timer_val) {
-    var inaccurate_time_obj = getInaccurateTimeObject(timer_val);
-    return generateTimerString(inaccurate_time_obj);
-}
-
-getInaccurateTimeObject = function(time_val) {
-    var seconds = timer_val / 1000;
-    var minutes = seconds / 60;
-    var hours = minutes / 60;
-    return {
-        h: Math.floor(hours),
-        m: Math.floor(minutes % 60),
-        s: Math.floor(seconds)
-    };
-}
-
-/**
- * Represents given time as a string of the format hh:mm:ss.
- * TODO: add inaccurate_time_obj description
- */
-generateTimerString = function(inaccurate_time_obj) {
-    var hours_str = addZeroIfNeeded(inaccurate_time_obj.h.toString());
-    var minutes_str = addZeroIfNeeded(inaccurate_time_obj.m.toString());
-    var seconds_str = addZeroIfNeeded(inaccurate_time_obj.s.toString());
-    return hours_str + ":" + minutes_str + ":" + seconds_str;
-}
-
-/**
- * Adds a zero to the beginning of the string if its lenght is less than two symbols.
- * If length of the string is greater or equal to 2, returns the original string.
- * Used to represent hours, minutes and seconds on the timer display as two-digits
- * values.
- * @param {string} time_str - string to be checked.
- */
-addZeroIfNeeded = function(time_str) {
-    if (time_str.length < 2) {
-        return "0" + time_str;
-    }
-    return time_str;
-}
-
 /** Change value on the timer display to the current timer value. */
 setTimerDisplay = function() {
-    var timer_string = generateTimerDisplay(current_timer_value);
-    changeElementText(timer_string, $("#timer-display #timer-clock"));
+    changeElementText(current_timer_value.toString(), 
+                        $("#timer-display #timer-clock"));
 }
 
 /** 
@@ -195,7 +155,7 @@ $(document).ready(function() {
         if (is_active) {
             return;
         }
-        if (current_timer_value <= 0) {
+        if (current_timer_value.total_seconds <= 0) {
             return;
         }
         is_active = true;

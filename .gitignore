@@ -240,6 +240,9 @@ _Pvt_Extensions
 # Visual Studio Code files
 **/.vscode/
 
+# WebStorm and other JetBrains products files
+**/.idea/
+
 # Files fetched by bower
 wwwroot/lib
 
