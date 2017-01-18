@@ -1,0 +1,10 @@
+{
+    "plugins": {
+        "node": {}
+    },
+    "loadEagerly": [
+        "wwwroot/lib/**/*.js",
+        "wwwroot/custom-scripts/**/*.js",
+        "wwwroot/test/**/*.js"
+    ]
+}

@@ -13,7 +13,7 @@ function TimeObject(time_val) {
                 throw new TypeError(err_msg);
         }
         parsed_time = TimeObject.parseTimeString(time_string);
-        this.setFromParsed(parsed_time);
+        TimeObject.setFromParsed(this, parsed_time);
     };
 
     if ("number" !== typeof time_val && "string" !== typeof time_val) {
@@ -64,6 +64,18 @@ TimeObject.compare = function(first, second) {
     return first.compareTo(second);
 };
 
+TimeObject.setFromParsed = function(time_object, parsed_time) {
+    var ms_time;
+    time_object.hours = function() { return parsed_time.h; };
+    time_object.minutes = function() { return parsed_time.m; };
+    time_object.seconds = function() { return parsed_time.s; };
+    ms_time = (time_object.hours * 3600 + time_object.minutes * 60 + 
+                time_object.seconds) * 1000;
+    time_object.total_ms = function () {
+        return ms_time;
+    };
+};
+
 TimeObject.prototype.toString = function() {
     var addZeroIfNeeded = function(time_val) {
         if (time_val < 10) {
@@ -100,18 +112,7 @@ TimeObject.prototype.setFromMsTime = function(ms_time) {
         throw new TypeError(err_msg);
     }
     parsed_time = TimeObject.parseMsTime(ms_time);
-    setFromParsed(parsed_time);
-};
-
-TimeObject.prototype.setFromParsed = function(parsed_time) {
-    var ms_time;
-    this.hours = function() { return parsed_time.h; };
-    this.minutes = function() { return parsed_time.m; };
-    this.seconds = function() { return parsed_time.s; };
-    ms_time = (this.hours * 3600 + this.minutes * 60 + this.seconds) * 1000;
-    this.total_ms = function () {
-        return ms_time;
-    };
+    TimeObject.setFromParsed(this, parsed_time);
 };
 
 TimeObject.prototype.valueOf = function() {

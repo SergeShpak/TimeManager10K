@@ -18,8 +18,7 @@
     "gulp-uglify": "1.5.3",
     "gulp-util": "3.0.7",
     "main-bower-files": "2.13.1",
-    "rimraf": "2.5.2",
-    "chai": "latest"
+    "rimraf": "2.5.2"
   },
   "scripts": {
     "test": "mocha ./wwwroot/test/*.js"

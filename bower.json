@@ -9,6 +9,6 @@
   },
   "devDependencies": {
     "mocha": null,
-    "mochawesome": null
+    "chai": null
   }
 }
