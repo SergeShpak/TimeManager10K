@@ -122,3 +122,7 @@ TimeObject.prototype.valueOf = function() {
 TimeObject.prototype.compareTo = function(that) {
     return this.total_ms() - that.total_ms();
 };
+
+TimeObject.prototype.copy = function() {
+    return new TimeObject(this.total_ms());
+};
