@@ -1,7 +1,5 @@
 'use strict';
 
-var assert = chai.assert;
-
 describe('TimeObject', function() {
   describe('instantiate', function() {
       it('should instantiate correctly from ms_time val', function() {
