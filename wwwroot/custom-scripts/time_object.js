@@ -2,24 +2,24 @@ function TimeObject(time_val) {
     var err_msg;
     var parsed_time;
 
-    var initialiseFromString = function(time_string) {
+    var initialiseFromString = function(time_obj, time_string) {
         var is_valid = TimeObject.isValidTimeString(time_string);
         var err_msg;
         var parsed_time;
         if (!is_valid) {
             err_msg = ["Bad argument for TimeObject initialisation. ",
                 "Cannot initialise TimeObject with '" + time_string + "'. ",
-                "time_val must be a string of format 'hh:mm:ss'."].join();
+                "time_val must be a string of format 'hh:mm:ss'."].join("");
                 throw new TypeError(err_msg);
         }
         parsed_time = TimeObject.parseTimeString(time_string);
-        TimeObject.setFromParsed(this, parsed_time);
+        TimeObject.setFromParsed(time_obj, parsed_time);
     };
 
     if ("number" !== typeof time_val && "string" !== typeof time_val) {
         err_msg = ["Bad argument type for TimeObject initialisation. ",
                     "Cannot initialise TimeObject with '" + time_val + "'. ",
-                    "time_val must be a number or a string."].join();
+                    "time_val must be a number or a string."].join("");
         throw new TypeError(err_msg);
     }
     if ("number" === typeof time_val) {
@@ -27,7 +27,7 @@ function TimeObject(time_val) {
         
     }
     if ("string" === typeof time_val) {
-        initialiseFromString(time_val);
+        initialiseFromString(this, time_val);
     }
 };
 
@@ -58,9 +58,6 @@ TimeObject.isValidTimeString = function(time_str) {
 };
 
 TimeObject.compare = function(first, second) {
-    if (first === second) {
-        return 0;
-    }
     return first.compareTo(second);
 };
 
@@ -108,7 +105,7 @@ TimeObject.prototype.setFromMsTime = function(ms_time) {
     if (ms_time < 0) {
         err_msg = ["Bad argument for TimeObject initialisation. ",
                 "Cannot initialise TimeObject with '" + time_val + "'. ",
-                "time_val must be positive."].join();
+                "time_val must be positive."].join("");
         throw new TypeError(err_msg);
     }
     parsed_time = TimeObject.parseMsTime(ms_time);
@@ -121,6 +118,9 @@ TimeObject.prototype.valueOf = function() {
 
 //TODO: add type checking
 TimeObject.prototype.compareTo = function(that) {
+    if (this === that) {
+        return 0;
+    }
     return this.total_ms() - that.total_ms();
 };
 
