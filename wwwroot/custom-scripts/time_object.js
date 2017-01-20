@@ -53,7 +53,7 @@ TimeObject.parseTimeString = function(time_string) {
 
 TimeObject.isValidTimeString = function(time_str) {
     var is_valid = 
-            /^([0-9]{1,2}:)?([0-5]?[0-9]:)?([0-5]?[0-9])$/.test(time_str);
+            /^(([0-9]{1,2}:)?([0-5]?[0-9]:))?([0-5]?[0-9])$/.test(time_str);
     return is_valid;
 };
 
@@ -67,7 +67,8 @@ TimeObject.setFromParsed = function(time_object, parsed_time) {
     time_object.minutes = function() { return parsed_time.m; };
     time_object.seconds = function() { return parsed_time.s; };
     ms_time = (time_object.hours * 3600 + time_object.minutes * 60 + 
-                time_object.seconds) * 1000;
+                time_object.seconds) * 1000
+
     time_object.total_ms = function () {
         return ms_time;
     };

@@ -16,6 +16,26 @@ var bigger_time_val_fixt = {
     s: 12
 };
 
+var seconds_time = {
+    s: 20,
+    time_string: "20"
+};
+
+var minutes_time = {
+    s: 0,
+    m: 15,
+    minutes_string: "15:00"
+};
+
+var valid_seconds_strings = ["20", "05", "5", "0", "00"];
+var valid_minutes_strings = ["1:05", "1:5", "0:05", "13:12", "00:03"];
+var valid_hours_strings = ["10:11:12", "09:11:12", "11:4:12", "11:43:5",
+                            "45:05:12"];
+var invalid_seconds_strings = ["61", "-10", "", ":01", "12aj", "001"];
+var invalid_minutes_strings = ["12:", "65:01", "as:12", "-10:12", "001:12", 
+                                ":12:"];
+var invalid_hours_strings = ["12:", "as:12:13", "-10:12:05", "001:12:11"];
+
 describe('TimeObject', function() {
     describe('Instantiate', function() {
         it('Should instantiate correctly from ms_time val', function() {
@@ -79,6 +99,46 @@ describe('TimeObject', function() {
             chai.assert.equal(time_val_fixt.h, parsed_time.h);
             chai.assert.equal(time_val_fixt.m, parsed_time.m);
             chai.assert.equal(time_val_fixt.s, parsed_time.s);
+        });
+    });
+});
+
+describe('TimeObject', function() {
+    describe('isValidTimeString', function() {
+        it('Should recognize valid strings.', function(){
+            var current_string;
+            var fail_message;
+            var test_strings = 
+                valid_seconds_strings.concat(valid_minutes_strings, 
+                                            valid_hours_strings);
+            for (var i = 0; i < test_strings.length; i++) {
+                current_string = test_strings[i];
+                fail_message = ['String "', current_string, '" does not ',
+                        'appear to be valid, although it should.'].join("");
+                chai.assert.isTrue(
+                    TimeObject.isValidTimeString(current_string), 
+                    fail_message);
+            } 
+        });
+    });
+});
+
+describe('TimeObject', function() {
+    describe('isValidTimeString', function() {
+        it('Should recognize invalid strings.', function(){
+            var current_string;
+            var fail_message;
+            var test_strings = 
+                invalid_seconds_strings.concat(invalid_minutes_strings, 
+                                                invalid_hours_strings);
+            for (var i = 0; i < test_strings.length; i++) {
+                current_string = test_strings[i];
+                fail_message = ['String "', current_string, '" appears to be ',
+                                'valid, although it should not.'].join("");
+                chai.assert.isFalse(
+                    TimeObject.isValidTimeString(current_string), 
+                    fail_message);
+            } 
         });
     });
 });
