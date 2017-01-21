@@ -32,13 +32,14 @@ function TimeObject(time_val) {
 };
 
 TimeObject.parseMsTime = function(time_val) {
-    var seconds = time_val / 1000;
-    var minutes = seconds / 60;
-    var hours = minutes / 60;
+    var time_seconds = Math.floor(time_val / 1000);
+    var seconds = Math.floor(time_seconds % 60);
+    var minutes = Math.floor((time_seconds / 60) % 60);
+    var hours = Math.floor(time_seconds / 3600);
     return {
-        h: Math.floor(hours),
-        m: Math.floor(minutes % 60),
-        s: Math.floor(seconds % 60)
+        h: hours,
+        m: minutes,
+        s: seconds
     };
 };
 
@@ -66,8 +67,8 @@ TimeObject.setFromParsed = function(time_object, parsed_time) {
     time_object.hours = function() { return parsed_time.h; };
     time_object.minutes = function() { return parsed_time.m; };
     time_object.seconds = function() { return parsed_time.s; };
-    ms_time = (time_object.hours * 3600 + time_object.minutes * 60 + 
-                time_object.seconds) * 1000
+    ms_time = (time_object.hours() * 3600 + time_object.minutes() * 60 + 
+                time_object.seconds()) * 1000
 
     time_object.total_ms = function () {
         return ms_time;

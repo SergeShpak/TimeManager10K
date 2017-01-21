@@ -8,7 +8,7 @@ var time_val_fixt = {
     s: 10
 };
 
-var bigger_time_val_fixt = {
+var greater_time_val_fixt = {
     ms_val: (14 * 3600 + 10 * 60 + 12) * 1000,
     time_str: "14:10:12",
     h: 14,
@@ -16,15 +16,20 @@ var bigger_time_val_fixt = {
     s: 12
 };
 
-var seconds_time = {
-    s: 20,
-    time_string: "20"
+var smaller_time_val_fixt = {
+    ms_val: (10 * 3600 + 7 * 60 + 12) * 1000,
+    time_str: "10:07:12",
+    h: 10,
+    m: 7,
+    s: 12
 };
 
-var minutes_time = {
-    s: 0,
-    m: 15,
-    minutes_string: "15:00"
+var big_time_val_fixt = {
+    ms_val: (25 * 3600 + 59 * 60 + 59) * 1000,
+    time_str: "25:59:59",
+    h: 25,
+    m: 59,
+    s: 59
 };
 
 var valid_seconds_strings = ["20", "05", "5", "0", "00"];
@@ -140,5 +145,58 @@ describe('TimeObject', function() {
                     fail_message);
             } 
         });
+    });
+});
+
+describe('TimeObject', function() {
+    describe('add', function() {
+        it ('Should add TimeObjects correctly.', function() {
+            var time_val = new TimeObject(time_val_fixt.ms_val);
+            var smaller_time_val = 
+                new TimeObject(smaller_time_val_fixt.ms_val);
+            time_val.add(smaller_time_val);
+            chai.assert.equal(22, time_val.hours());
+            chai.assert.equal(27, time_val.minutes());
+            chai.assert.equal(22, time_val.seconds());
+            chai.assert.equal((22 * 3600 + 27 * 60 + 22) * 1000, 
+                                    time_val.total_ms()); 
+        });
+    });
+});
+
+describe('TimeObject', function() {
+    describe('add', function() {
+        it ('Should add TimeObjects correctly (with "modulo" arithmetics).',
+            function() {
+                var time_val = new TimeObject(time_val_fixt.ms_val);
+                var big_time_val = new TimeObject(big_time_val_fixt.ms_val);
+                time_val.add(big_time_val);
+                
+                chai.assert.equal(38, time_val.hours());
+                chai.assert.equal(20, time_val.minutes());
+                chai.assert.equal(9, time_val.seconds());
+                chai.assert.equal((38 * 3600 + 20 * 60 + 9) * 1000, 
+                                        time_val.total_ms());
+
+            });
+    });
+});
+
+describe('TimeObject', function() {
+    describe('add', function() {
+        it ('Should not change added object.',
+            function() {
+                var time_val = new TimeObject(time_val_fixt.ms_val);
+                var big_time_val = new TimeObject(big_time_val_fixt.ms_val);
+                var prev_hours = big_time_val.hours();
+                var prev_minutes = big_time_val.minutes();
+                var prev_seconds = big_time_val.seconds();
+                var prev_total_ms = big_time_val.total_ms();
+                time_val.add(big_time_val);
+                chai.assert.equal(prev_hours, big_time_val.hours());
+                chai.assert.equal(prev_minutes, big_time_val.minutes());
+                chai.assert.equal(prev_seconds, big_time_val.seconds());
+                chai.assert.equal(prev_total_ms, big_time_val.total_ms());
+            });
     });
 });
