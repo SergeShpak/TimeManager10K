@@ -4,8 +4,7 @@ function Task() {
     if (4 != arguments.length && 0 != arguments.length) {
         err_msg = ["Bad number of arguments: expected 0 or 4; passed: ",
                     arguments.length.toString(), "."].join();
-        // TODO: choose appropriate error type
-        throw new Error(err_msg);
+        throw new TypeError(err_msg);
     }
     if (0 == arguments.length) {
         this.setDataToEmpty();

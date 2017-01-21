@@ -50,11 +50,7 @@ describe('TimeObject', function() {
             chai.assert.equal(time_val_fixt.m, time_obj.minutes());
             chai.assert.equal(time_val_fixt.s, time_obj.seconds());
       });
-  });
-});
-
-describe('TimeObject', function() {
-    describe('Instantiate', function() {
+        
         it('Should instantiate correctly from well-formed string', function() {
             var time_str = time_val_fixt.time_str;
             var time_obj = new TimeObject(time_str);
@@ -62,21 +58,20 @@ describe('TimeObject', function() {
             chai.assert.equal(time_val_fixt.m, time_obj.minutes());
             chai.assert.equal(time_val_fixt.s, time_obj.seconds());
         });
-    });
-});
-
-describe('TimeObject', function() {
-    describe('Instantiate', function() {
+       
         it(['Should raise a TypeError when instantiated not with a number or ',
             'a string.'].join(""), function() {
             chai.expect(function() {
                 var time_obj = new TimeObject({});
             }).to.throw(TypeError);
         });
-    });
-});
 
-describe('TimeObject', function() {
+        it('New object should be an instance of TimeObject.', function() {
+            var time_obj = new TimeObject(time_val_fixt.ms_val);
+            chai.assert.instanceOf(time_obj, TimeObject);
+        });
+    });
+    
     describe('ParseMsTime', function() {
         it(['Should return an object with fields "h", "m", and "s" with ',
             'valid values.'].join(""), function() {
@@ -90,9 +85,7 @@ describe('TimeObject', function() {
             chai.assert.equal(time_val_fixt.s, parsed_time.s);
         });
     });
-});
 
-describe('TimeObject', function() {
     describe('ParseTimeString', function() {
         it(['Should return an object with fields "h", "m", and "s" with ',
             'valid values.'].join(""), function() {
@@ -106,9 +99,7 @@ describe('TimeObject', function() {
             chai.assert.equal(time_val_fixt.s, parsed_time.s);
         });
     });
-});
-
-describe('TimeObject', function() {
+    
     describe('isValidTimeString', function() {
         it('Should recognize valid strings.', function(){
             var current_string;
@@ -125,11 +116,7 @@ describe('TimeObject', function() {
                     fail_message);
             } 
         });
-    });
-});
 
-describe('TimeObject', function() {
-    describe('isValidTimeString', function() {
         it('Should recognize invalid strings.', function(){
             var current_string;
             var fail_message;
@@ -146,9 +133,7 @@ describe('TimeObject', function() {
             } 
         });
     });
-});
 
-describe('TimeObject', function() {
     describe('add', function() {
         it ('Should add TimeObjects correctly.', function() {
             var time_val = new TimeObject(time_val_fixt.ms_val);
@@ -161,11 +146,7 @@ describe('TimeObject', function() {
             chai.assert.equal((22 * 3600 + 27 * 60 + 22) * 1000, 
                                     time_val.total_ms()); 
         });
-    });
-});
 
-describe('TimeObject', function() {
-    describe('add', function() {
         it ('Should add TimeObjects correctly (with "modulo" arithmetics).',
             function() {
                 var time_val = new TimeObject(time_val_fixt.ms_val);
@@ -179,11 +160,7 @@ describe('TimeObject', function() {
                                         time_val.total_ms());
 
             });
-    });
-});
 
-describe('TimeObject', function() {
-    describe('add', function() {
         it ('Should not change added object.',
             function() {
                 var time_val = new TimeObject(time_val_fixt.ms_val);
