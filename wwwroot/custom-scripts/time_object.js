@@ -89,6 +89,7 @@ TimeObject.prototype.toString = function() {
 
 TimeObject.prototype.add = function(that) {
     this.setFromMsTime(this.total_ms() + that.total_ms());
+    return this;
 };
 
 TimeObject.prototype.sub = function(that) {
@@ -100,6 +101,7 @@ TimeObject.prototype.sub = function(that) {
         diff = 0;
     }
     this.setFromMsTime(diff);
+    return this;
 };
 
 TimeObject.prototype.setFromMsTime = function(ms_time) {
@@ -118,10 +120,12 @@ TimeObject.prototype.valueOf = function() {
     return this.total_ms();
 };
 
-//TODO: add type checking
 TimeObject.prototype.compareTo = function(that) {
     if (this === that) {
         return 0;
+    }
+    if (!(that instanceOf TimeObject)) {
+        return -1;
     }
     return this.total_ms() - that.total_ms();
 };

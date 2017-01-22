@@ -9,11 +9,11 @@ var time_val_fixt = {
 };
 
 var greater_time_val_fixt = {
-    ms_val: (14 * 3600 + 10 * 60 + 12) * 1000,
-    time_str: "14:10:12",
-    h: 14,
-    m: 10,
-    s: 12
+    ms_val: (12 * 3600 + 21 * 60 + 9) * 1000,
+    time_str: "12:21:09",
+    h: 12,
+    m: 21,
+    s: 9
 };
 
 var smaller_time_val_fixt = {
@@ -152,7 +152,6 @@ describe('TimeObject', function() {
                 var time_val = new TimeObject(time_val_fixt.ms_val);
                 var big_time_val = new TimeObject(big_time_val_fixt.ms_val);
                 time_val.add(big_time_val);
-                
                 chai.assert.equal(38, time_val.hours());
                 chai.assert.equal(20, time_val.minutes());
                 chai.assert.equal(9, time_val.seconds());
@@ -175,5 +174,62 @@ describe('TimeObject', function() {
                 chai.assert.equal(prev_seconds, big_time_val.seconds());
                 chai.assert.equal(prev_total_ms, big_time_val.total_ms());
             });
+    });
+
+    describe('sub', function() {
+        it('Should sub TimeObjects correctly.', function() {
+            var time_val = new TimeObject(time_val_fixt.ms_val);
+            var big_time_val = new TimeObject(big_time_val_fixt.ms_val);
+            big_time_val.sub(time_val);
+            chai.assert.equal(13, big_time_val.hours());
+            chai.assert.equal(39, big_time_val.minutes());
+            chai.assert.equal(49, big_time_val.seconds());
+            chai.assert.equal((13 * 3600 + 39 * 60 + 49) * 1000,
+                                        big_time_val.total_ms());
+        }); 
+
+        it('Should set time to zero, when sub results in a negative value.',
+            function() {
+                var time_val = new TimeObject(time_val_fixt.ms_val);
+                var big_time_val = new TimeObject(big_time_val_fixt.ms_val);    
+                time_val.sub(big_time_val);
+                chai.assert.equal(0, time_val.hours());
+                chai.assert.equal(0, time_val.minutes());
+                chai.assert.equal(0, time_val.seconds());
+                chai.assert.equal(0, time_val.total_ms());
+            });
+
+        it('Should sub TimeObjects correctly (with "modulo" arithmetics).',
+            function() {
+                var time_val = new TimeObject(time_val_fixt.ms_val);
+                var greater_time_val = 
+                                new TimeObject(greater_time_val_fixt.ms_val);
+                greater_time_val.sub(time_val);
+                chai.assert.equal(0, greater_time_val.hours());
+                chai.assert.equal(0, greater_time_val.minutes());
+                chai.assert.equal(59, greater_time_val.seconds());
+                chai.assert.equal(59 * 1000, greater_time_val.total_ms());
+            });
+
+        it('Should not change subed object.', function() {
+            var time_val = new TimeObject(time_val_fixt.ms_val);
+            var big_time_val = new TimeObject(big_time_val_fixt.ms_val);
+            var hours = time_val.hours();
+            var minutes = time_val.minutes();
+            var seconds = time_val.seconds();
+            var total_ms = time_val.total_ms();
+            big_time_val.sub(time_val);
+            chai.assert.equal(hours, time_val.hours());
+            chai.assert.equal(minutes, time_val.minutes());
+            chai.assert.equal(seconds, time_val.seconds());
+        });
+    });
+
+    describe('toString', function() {
+        it('Should return correct string representation.', function() {
+            var time_val = new TimeObject(time_val_fixt.ms_val);
+            var time_str = time_val.toString();
+            chai.assert.equal(time_val_fixt.time_str, time_str);
+        });
     });
 });
