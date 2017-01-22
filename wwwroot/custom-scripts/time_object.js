@@ -125,11 +125,13 @@ TimeObject.prototype.valueOf = function() {
 };
 
 TimeObject.prototype.compareTo = function(that) {
+    var err_msg;
     if (this === that) {
         return 0;
     }
     if (!(that instanceof TimeObject)) {
-        return -1;
+        err_msg = 'Compared objet is not an instance of the TimeObject.';
+        throw new TypeError(err_msg);
     }
     return this.total_ms() - that.total_ms();
 };

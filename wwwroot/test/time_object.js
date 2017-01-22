@@ -232,4 +232,49 @@ describe('TimeObject', function() {
             chai.assert.equal(time_val_fixt.time_str, time_str);
         });
     });
+
+    describe('compareTo', function() {
+        it('Should compare TimeObjects correctly.', function() {
+            var time_val = new TimeObject(time_val_fixt.ms_val);
+            var greater_time_val = 
+                                new TimeObject(greater_time_val_fixt.ms_val);
+            var smaller_time_val = 
+                                new TimeObject(smaller_time_val_fixt.ms_val);
+            var same_val = new TimeObject(time_val_fixt.ms_val);
+            var smaller_compare_result = time_val.compareTo(smaller_time_val);
+            var greater_compare_result = time_val.compareTo(greater_time_val);
+            var same_compare_result = time_val.compareTo(same_val);
+            chai.assert.isAbove(smaller_compare_result, 0);
+            chai.assert.isBelow(greater_compare_result, 0);
+            chai.assert.equal(same_compare_result, 0);
+        });
+
+        it(['Should throw a TypeError when compared object.', 
+            'is not a TimeObject.'].join(""), function() {
+                var some_obj = {some_field: 10};
+                var time_val = new TimeObject(time_val_fixt.ms_val);
+                chai.expect(function() {
+                    time_val.compareTo(some_obj);
+                }).to.throw(TypeError);
+        });
+    });
+
+    describe('valueOf', function() {
+        it('Should return time in milliseconds.', function() {
+            var time_val = new TimeObject(time_val_fixt.ms_val);
+            var value = time_val.valueOf();
+            chai.assert.equal(value, time_val_fixt.ms_val);
+        });
+    });
+
+    describe('copy', function() {
+        it('Should perform a deep copy.', function() {
+            var time_val = new TimeObject(time_val_fixt.ms_val);
+            var copy = time_val.copy();
+            chai.assert.equal(time_val.hours(), copy.hours());
+            chai.assert.equal(time_val.minutes(), copy.minutes());
+            chai.assert.equal(time_val.seconds(), copy.seconds());
+            chai.assert.notStrictEqual(time_val, copy);
+        });
+    });
 });

@@ -1,6 +1,7 @@
 function Task() {
     var name, interval, start_time, end_time;
     var err_msg;
+    var time_diff;
     if (4 != arguments.length && 0 != arguments.length) {
         err_msg = ["Bad number of arguments: expected 0 or 4; passed: ",
                     arguments.length.toString(), "."].join();
@@ -15,29 +16,25 @@ function Task() {
     start_time = arguments[2];
     end_time = arguments[3];
     // TODO: change to TimeObject checking
-    if (typeof name !== 'string' || typeof interval !== 'number'
-        || typeof start_time !== 'number' || typeof end_time !== 'number') {
+    if (typeof name !== 'string' || !(interval instanceof TimeObject)
+        || !(start_time instanceof TimeObject) 
+        || !(end_time instanceof TimeObject)) {
             err_msg = ["Bad arguments types for Task object initialization. ",
-                        "Task constructor signature is ",
-                        "Task(string, number, number, number)."].join();
-            throw new TypeError(msg);
+                "Task constructor signature is ",
+                "Task(string, TimeObject, TimeObject, TimeObject)."].join("");
+            throw new TypeError(err_msg);
     }
-    if (interval < 0 || start_time < 0 || end_time < 0) {
-        err_msg = ["Bad arguments for Task object initialization. ",
-                    "interval, start_time and end_time should all be ",
-                    "positive numbers"].join();
-        throw new TypeError(err_msg);
-    }
-    if ((start_time - end_time) < interval) {
+    time_diff = end_time.copy().sub(start_time);
+    if (time_diff.compareTo(interval) < 0) {
         err_msg = ["Bad arguments for Task object initialization. ",
                     "interval argument cannot be greater than the difference ",
-                    "start_time and end_time."].join();
+                    "between start_time and end_time."].join("");
         throw new TypeError(err_msg);
     }
     this.name = name;
-    this.interval = TimeObject(interval);
-    this.start_time = TimeObject(start_time);
-    this.end_time = TimeObject(end_time);
+    this.interval = interval;
+    this.start_time = start_time;
+    this.end_time = end_time;
 };
 
 Task.compare = function(first, second) {
