@@ -76,13 +76,17 @@ TimeObject.setFromParsed = function(time_object, parsed_time) {
 };
 
 TimeObject.prototype.toString = function() {
+    
     var addZeroIfNeeded = function(time_val) {
-        if (time_val < 10) {
-            return "0" + time_val.toString(); 
+        if (time_val >= 10) {
+            return time_val.toString();
         }
+        return "0" + time_val.toString(); 
     };
-    var result_parts = [addZeroIfNeeded(this.h), addZeroIfNeeded(this.m), 
-                    addZeroIfNeeded(this.s)];
+
+    var result_parts = [addZeroIfNeeded(this.hours()), 
+                        addZeroIfNeeded(this.minutes()), 
+                        addZeroIfNeeded(this.seconds())];
     var result = result_parts.join(":");
     return result;
 };
@@ -124,7 +128,7 @@ TimeObject.prototype.compareTo = function(that) {
     if (this === that) {
         return 0;
     }
-    if (!(that instanceOf TimeObject)) {
+    if (!(that instanceof TimeObject)) {
         return -1;
     }
     return this.total_ms() - that.total_ms();
