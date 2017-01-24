@@ -254,3 +254,6 @@ wwwroot/fonts
 
 # Minified CSS files that are produced by gulp
 **/*.min.css
+
+# Various log files
+**/*.log

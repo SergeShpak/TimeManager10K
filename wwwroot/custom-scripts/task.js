@@ -15,7 +15,6 @@ function Task() {
     interval = arguments[1];
     start_time = arguments[2];
     end_time = arguments[3];
-    // TODO: change to TimeObject checking
     if (typeof name !== 'string' || !(interval instanceof TimeObject)
         || !(start_time instanceof TimeObject) 
         || !(end_time instanceof TimeObject)) {
@@ -24,11 +23,16 @@ function Task() {
                 "Task(string, TimeObject, TimeObject, TimeObject)."].join("");
             throw new TypeError(err_msg);
     }
+    if (start_time.compareTo(end_time) > 0) {
+        err_msg = ["Bad arguments for Task object initialization. ",
+                "Start time cannot be greater than the end time."].join("");
+        throw new TypeError(err_msg);
+    }
     time_diff = end_time.copy().sub(start_time);
     if (time_diff.compareTo(interval) < 0) {
         err_msg = ["Bad arguments for Task object initialization. ",
-                    "interval argument cannot be greater than the difference ",
-                    "between start_time and end_time."].join("");
+                    "Task duration cannot be greater than the difference ",
+                    "between start time and end time."].join("");
         throw new TypeError(err_msg);
     }
     this.name = name;
@@ -38,19 +42,7 @@ function Task() {
 };
 
 Task.compare = function(first, second) {
-    var interval_comparison = 
-        TimeObject.compare(first.interval, second.interval);
-    var start_time_comparison = 
-        TimeObject.compare(first.start_time, second.start_time);
-    var end_time_comparison = 
-        TimeObject.compare(first.end_time, second.end_time);
-    if (first.name == second.name 
-        && !interval_comparison && !start_time_comparison 
-        && !end_time_comparison) {
-            return 0;
-    }
-    return interval_comparison || first.name.localeCompare(second.name)
-            || start_time_comparison || end_time_comparison;
+    return first.compare(second); 
 };
 
 Task.checkIntervalForConsistency = function(start_time, end_time, interval) {
@@ -61,7 +53,7 @@ Task.checkIntervalForConsistency = function(start_time, end_time, interval) {
         err_msg = ["Task duration consistecny check failed: task duration ",
                     "cannot be larger than the difference between task's ",
                     "end time and start time."].join();
-        throw new Error(err_msg);
+        throw new TypeError(err_msg);
     }
 };
 
@@ -73,7 +65,7 @@ Task.checkStartTimeForConsistency = function(start_time, end_time, interval) {
         err_msg = ["Task start time consistency check failed: ",
                     "task's start time cannot be greater than task's ",
                     "end time."].join();
-        throw new Error(err_msg);
+        throw new TypeError(err_msg);
     }
     if (null == task.interval) {
         return;
@@ -169,7 +161,7 @@ Task.prototype.setName = function(name) {
 // difference between the end and the start time
 Task.prototype.setInterval = function(interval) {
     var err_msg;
-    if ("number" != typeof interval && /* TODO */true) {
+    if ("number" != typeof interval && !(interval instanceof TimeObject)) {
         err_msg = ["Bad argument type: the interval should be of type ",
                     "number or TimeObject. The argument of type ",
                     typeof interval, "was passed."].join();
@@ -197,4 +189,24 @@ Task.prototype.setEndTime = function(end_time) {
 
     }
     this.end_time = end_time;
+};
+
+Task.prototype.compare = function(that) {
+    var err_msg;
+    if (!(that instanceof Task)) {
+        err_msg = ['Cannot compare Task to an object that is not ',
+                            'an instance of Task.'].join("");
+        throw new TypeError(err_msg);
+    }
+    if (this === that) {
+        return 0;
+    }
+    var interval_comparison = 
+        TimeObject.compare(this.interval, that.interval);
+    var start_time_comparison = 
+        TimeObject.compare(this.start_time, that.start_time);
+    var end_time_comparison = 
+        TimeObject.compare(this.end_time, that.end_time);
+    return interval_comparison || this.name.localeCompare(that.name)
+            || -start_time_comparison || -end_time_comparison;
 };
