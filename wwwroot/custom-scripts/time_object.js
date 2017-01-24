@@ -46,9 +46,9 @@ TimeObject.parseMsTime = function(time_val) {
 TimeObject.parseTimeString = function(time_string) {
     var time_parts = time_string.split(":");
     return {
-        h: time_parts[0].toString(),
-        m: time_parts[1].toString(),
-        s: time_parts[2].toString()
+        h: parseInt(time_parts[0]),
+        m: parseInt(time_parts[1]),
+        s: parseInt(time_parts[2])
     };
 };
 

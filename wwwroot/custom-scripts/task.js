@@ -42,7 +42,52 @@ function Task() {
 };
 
 Task.compare = function(first, second) {
+    if (!(first instanceof Task)) {
+        throw new TypeError("First argument is not a Task.");
+    }
     return first.compare(second); 
+};
+
+Task.isConsistentTriplet = 
+    function(interval, start_time, end_time) {
+        var err_msg;
+        var current_arg;
+        var is_valid;
+        var diff;
+        for (var i = 0; i < 3; i++) {
+            current_arg = arguments[i];
+            if (current_arg && !(current_arg instanceof TimeObject)) {
+                err_msg = "Passed arguments must be TimeObjetcs.";
+                throw new TypeError(err_msg);
+            }
+            current_arg.toString();
+        }
+        if (start_time && end_time) { 
+            is_valid = Task.areValidStartEndTimes(start_time, end_time);
+            if (!is_valid) {
+                return false;
+            }
+            if (interval 
+                && !(Task.isValidInterval(interval, start_time, end_time))) {
+                return false    
+            }
+        }
+        return true;
+};
+
+Task.areValidStartEndTimes = function(start_time, end_time) {
+    if (start_time.compareTo(end_time) <= 0) {
+        return true;
+    } 
+    return false;
+};
+
+Task.isValidInterval = function(interval, start_time, end_time) {
+    var diff = end_time.copy().sub(start_time);
+    if (interval.compareTo(diff) <= 0) {
+        return true;
+    }
+    return false;
 };
 
 Task.checkIntervalForConsistency = function(start_time, end_time, interval) {

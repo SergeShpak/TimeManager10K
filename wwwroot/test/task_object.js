@@ -1,27 +1,40 @@
 'use strict'
 
-var good_task_fields = {
+var initFromTaskStoreObject,
+    initTripletFromTaskStoreObject;
+
+var good_task_fields,
+    start_greater_end,
+    duration_greater_diff,
+    tasks_store_desc,
+    consistent_triplet,
+    start_greater_end_triplet,
+    duration_greater_diff_triplet;
+
+
+
+good_task_fields = {
     name: "Good",
     interval: "00:20:00",
     start_time: "14:20:00",
     end_time: "14:40:00"
 };
 
-var start_greater_end = {
+start_greater_end = {
     name: "Bad",
     interval: "00:20:00",
     end_time: "14:20:00",
     start_time: "14:40:00"
 };
 
-var duration_greater_diff = {
+duration_greater_diff = {
     name: "Bad",
     interval: "00:25:00",
     start_time: "14:20:00",
     end_time: "14:40:00"
 };
 
-var tasks_store_desc = [
+tasks_store_desc = [
     {
         name: "B",
         interval: "00:30:00",
@@ -51,7 +64,22 @@ var tasks_store_desc = [
     }
 ];
 
-var initFromTaskStoreObject = function(task_store_obj) {
+initTripletFromTaskStoreObject = function(task_store_obj) {
+    return {
+        interval: new TimeObject(task_store_obj.interval),
+        start_time: new TimeObject(task_store_obj.start_time),
+        end_time: new TimeObject(task_store_obj.end_time)
+    };
+};
+
+consistent_triplet = initTripletFromTaskStoreObject(good_task_fields);
+
+start_greater_end_triplet = initTripletFromTaskStoreObject(start_greater_end);
+
+duration_greater_diff_triplet = 
+    initTripletFromTaskStoreObject(duration_greater_diff);
+
+initFromTaskStoreObject = function(task_store_obj) {
     var name = task_store_obj.name;
     var interval = new TimeObject(task_store_obj.interval);
     var start_time = new TimeObject(task_store_obj.start_time);
@@ -113,6 +141,40 @@ describe('Task', function() {
             }
             var equal_task = initFromTaskStoreObject(tasks_store_desc[0]);
             chai.assert.equal(0, equal_task.compare(tasks_desc[0]));
-        });        
+        });
+
+        it('Should throw a TypeError if compared object is not a task', 
+            function() {
+                var task = initFromTaskStoreObject(good_task_fields);
+                var some_obj = { first: "foremost" };
+                chai.expect(function() {
+                    task.compare(some_obj);
+                }).to.throw(TypeError);
+            });
+    });
+
+    describe('isConsistentTriplet', function() {
+        it('Should recognize cosistent triplets.', function() {
+           chai.assert.isTrue(Task.isConsistentTriplet(
+               consistent_triplet.interval, consistent_triplet.start_time, 
+               consistent_triplet.end_time)); 
+        });
+
+        it(['Should recognize inconsistency, when start time is greater ',
+            'than end time.'].join(""), function() {
+            chai.assert.isFalse(Task.isConsistentTriplet(
+                start_greater_end_triplet.interval, 
+                start_greater_end_triplet.start_time, 
+                start_greater_end_triplet.end_time));
+        });
+        
+        it(['Should recognize inconsistency, when duration is greater ',
+            'than the difference between start and end time.'].join(""), 
+            function() {
+            chai.assert.isFalse(Task.isConsistentTriplet(
+                duration_greater_diff_triplet.interval, 
+                duration_greater_diff_triplet.start_time, 
+                duration_greater_diff_triplet.end_time));
+        });
     });
 });
