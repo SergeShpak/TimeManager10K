@@ -4,7 +4,7 @@ function Task() {
     var time_diff;
     if (4 != arguments.length && 0 != arguments.length) {
         err_msg = ["Bad number of arguments: expected 0 or 4; passed: ",
-                    arguments.length.toString(), "."].join();
+                    arguments.length.toString(), "."].join("");
         throw new TypeError(err_msg);
     }
     if (0 == arguments.length) {
@@ -48,31 +48,22 @@ Task.compare = function(first, second) {
     return first.compare(second); 
 };
 
-Task.isConsistentTriplet = 
-    function(interval, start_time, end_time) {
+Task.validateTriplet = function(interval, start_time, end_time, err_vals) {
         var err_msg;
         var current_arg;
-        var is_valid;
-        var diff;
-        for (var i = 0; i < 3; i++) {
-            current_arg = arguments[i];
-            if (current_arg && !(current_arg instanceof TimeObject)) {
-                err_msg = "Passed arguments must be TimeObjetcs.";
-                throw new TypeError(err_msg);
-            }
-            current_arg.toString();
+        if (!(start_time && end_time)) {
+            return;
         }
-        if (start_time && end_time) { 
-            is_valid = Task.areValidStartEndTimes(start_time, end_time);
-            if (!is_valid) {
-                return false;
-            }
-            if (interval 
-                && !(Task.isValidInterval(interval, start_time, end_time))) {
-                return false    
-            }
+        if (!Task.areValidStartEndTimes(start_time, end_time)) {
+            throw new TypeError(err_vals[0]);
         }
-        return true;
+        if (!interval) {
+            return;
+        }
+        if (!Task.isValidInterval(interval, start_time, end_time)) {
+            throw new TypeError(err_vals[1]);
+        }
+        return;
 };
 
 Task.areValidStartEndTimes = function(start_time, end_time) {
@@ -90,69 +81,18 @@ Task.isValidInterval = function(interval, start_time, end_time) {
     return false;
 };
 
-Task.checkIntervalForConsistency = function(start_time, end_time, interval) {
-    var end_time = end_time.copy();
-    var diff = end_time.sub(start_time);
+Task.validateTimeVal = function(time_val) {
     var err_msg;
-    if (interval > diff) {
-        err_msg = ["Task duration consistecny check failed: task duration ",
-                    "cannot be larger than the difference between task's ",
-                    "end time and start time."].join();
+    if ("number" != typeof time_val && !(time_val instanceof TimeObject)) {
+        err_msg = ["Bad argument type: time value should be of type ",
+                    "number or TimeObject. The argument of type ",
+                    typeof time_val, "was passed."].join();
         throw new TypeError(err_msg);
     }
-};
-
-// TODO: add checking with the use of end date and interval
-// TODO: rewrite as triplet consistency check
-Task.checkStartTimeForConsistency = function(start_time, end_time, interval) {
-    var err_msg;
-    if (start_time > task.end_time) {
-        err_msg = ["Task start time consistency check failed: ",
-                    "task's start time cannot be greater than task's ",
-                    "end time."].join();
-        throw new TypeError(err_msg);
+    if ("number" == typeof time_val) {
+        time_val = new TimeObject(time_val);
     }
-    if (null == task.interval) {
-        return;
-    }
-    Task.checkIntervalForConsistency(start_time, end_time, interval);
-};
-
-//TODO: add checking with regard to the start date and interval
-Task.checkEndTimeForConsistency = function(task, end_time) {
-    var err_msg;
-    if (end_time < task.start_time) {
-        err_msg = ["Task end time consistency check failed: ",
-                    "task's end time cannot be lesser than task's ",
-                    "start time."].join();
-        throw new Error(err_msg);
-    }
-};
-
-Task.local_storage_key = "timer_tasks";
-
-Task.prototype.saveToLocalStorage = function() {
-    var stored_tasks_json;
-    var stored_tasks;
-    var index_for_task;
-    var saveTasksToLocalStorage = function(tasks) {
-        var tasks_json = JSON.stringify(tasks);
-        localStorage[Task.local_storage_key] = tasks_json;
-        return;
-    };
-    if (!localStorage[Task.local_storage_key]) {
-        localStorage[Task.local_storage_key] = JSON.stringify([]);
-    }
-    stored_tasks_json = localStorage[Task.local_storage_key];
-    stored_tasks = JSON.parse(stored_tasks_json);
-    if (0 == stored_tasks.length) {
-        stored_tasks = stored_tasks.push(this);
-        saveTasksToLocalStorage(stored_tasks);
-        return;
-    }
-    index_for_task = findIndexForTask(stored_tasks);
-    stored_tasks.splice(index_for_task, 0);
-    saveTasksToLocalStorage(stored_tasks); 
+    return time_val;
 };
 
 Task.prototype.findIndexForTask = function(tasks) {
@@ -202,38 +142,53 @@ Task.prototype.setName = function(name) {
     this.name = name;
 };
 
-// TODO: add type checking and that the interval is not bigger than the 
-// difference between the end and the start time
 Task.prototype.setInterval = function(interval) {
     var err_msg;
-    if ("number" != typeof interval && !(interval instanceof TimeObject)) {
-        err_msg = ["Bad argument type: the interval should be of type ",
-                    "number or TimeObject. The argument of type ",
-                    typeof interval, "was passed."].join();
+    var is_valid_interval;
+    interval = Task.validateTimeVal(interval); 
+    if (!(this.start_time && this.end_time)) {
+        this.interval = interval;
+        return this;
+    }
+    is_valid_interval = 
+        Task.isValidInterval(interval, this.start_time, this.end_time);
+    if (!is_valid_interval) {
+        err_msg = ['Inconsistent task duration value. Duration cannot be ',
+                    'greater than the difference between task\'s end and ',
+                    'start times.'].join("");
         throw new TypeError(err_msg);
     }
-    if (this.start_time && this.end_time) {
-        Task.checkIntervalForConsistency(interval, this);
-    }
     this.interval = interval;
+    return this;
 };
 
-// TODO: add type checking and checking that start time is before end time
 Task.prototype.setStartTime = function(start_time) {
-    var err_msg;
-    if ("number" != typeof start_time && /* TODO */ true) {
-
-    }
+    var err_msgs = [
+        ['Inconsistent task\'s start time. Start time cannot be ',
+                    'greater than the end time.'].join(""),
+        ['Inconsistent task\'s start time. Duration cannot be ',
+                    'greater than the difference between task\'s end and ',
+                    'start times.'].join("")
+    ];
+    var is_valid_start_time;
+    start_time = validateTimeVal(start_time); 
+    Task.validateTriplet(this.interval, start_time, this.end_time, err_msgs); 
     this.start_time = start_time;
+    return this;
 };
 
-// TODO: add type checking and checking that end time is after start time
 Task.prototype.setEndTime = function(end_time) {
-    var err_msg;
-    if ("number" != typeof start_time && /* TODO */ true) {
-
-    }
+    var err_msgs = [
+        ['Inconsistent task\'s end time. End time cannot ',
+                    'be smaller than start time.'].join(""),
+        ['Inconsistent task\'s end time. Duration cannot be ',
+                    'greater than the difference between task\'s end and ',
+                    'start time.'].join("")
+    ];
+    end_time = Task.validateTimeVal(end_time);
+    Task.validateTriplet(this.interval, this.start_time, this.end_time);
     this.end_time = end_time;
+    return this;
 };
 
 Task.prototype.compare = function(that) {

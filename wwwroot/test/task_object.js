@@ -152,29 +152,65 @@ describe('Task', function() {
                 }).to.throw(TypeError);
             });
     });
-
-    describe('isConsistentTriplet', function() {
-        it('Should recognize cosistent triplets.', function() {
-           chai.assert.isTrue(Task.isConsistentTriplet(
-               consistent_triplet.interval, consistent_triplet.start_time, 
-               consistent_triplet.end_time)); 
+    
+    describe('areValidStartEndTimes', function() {
+        it('Should recognize valid start and end times.', function() {
+            chai.assert.isTrue(Task.areValidStartEndTimes(
+                                    consistent_triplet.start_time, 
+                                    consistent_triplet.end_time)); 
         });
 
-        it(['Should recognize inconsistency, when start time is greater ',
-            'than end time.'].join(""), function() {
-            chai.assert.isFalse(Task.isConsistentTriplet(
-                start_greater_end_triplet.interval, 
-                start_greater_end_triplet.start_time, 
-                start_greater_end_triplet.end_time));
+        it('Should recognize invalid start and end times.', function() {
+            chai.assert.isFalse(Task.areValidStartEndTimes(
+                                    start_greater_end_triplet.start_time,
+                                    start_greater_end_triplet.end_time));
         });
-        
-        it(['Should recognize inconsistency, when duration is greater ',
-            'than the difference between start and end time.'].join(""), 
+    });
+
+    describe('isValidInterval', function() {
+        it('Should recognize consistent interval.', function() {
+            chai.assert.isTrue(Task.isValidInterval(
+                                    consistent_triplet.interval,
+                                    consistent_triplet.start_time,
+                                    consistent_triplet.end_time));
+        });
+
+        it('Should recognize inconsistent interval.', function() {
+            chai.assert.isFalse(Task.isValidInterval(
+                                    duration_greater_diff_triplet.interval,
+                                    duration_greater_diff_triplet.start_time,
+                                    duration_greater_diff_triplet.end_time));
+        });
+    });
+
+    describe('setDataToEmpty', function() {
+        it('Should set task fields to null.', function() {
+            var task = new Task("Task",
+                                consistent_triplet.interval,
+                                consistent_triplet.start_time,
+                                consistent_triplet.end_time);
+            task.setDataToEmpty();
+            chai.assert.isNull(task.interval);
+            chai.assert.isNull(task.start_time);
+            chai.assert.isNull(task.end_time);
+        }); 
+    });
+
+    describe('setName', function() {
+        it('Should set task\'s name correctly.', function() {
+            var task = new Task();
+            var name = "My task";
+            task.setName("My task");
+            chai.assert.equal(name, task.name);
+        });
+
+        it('Should raise TypeError when passed argument is not a string',
             function() {
-            chai.assert.isFalse(Task.isConsistentTriplet(
-                duration_greater_diff_triplet.interval, 
-                duration_greater_diff_triplet.start_time, 
-                duration_greater_diff_triplet.end_time));
-        });
+                var task= new Task();
+                var bad_name = 4;
+                chai.expect(function() {
+                    task.setName(bad_name);
+                }).to.throw(TypeError);
+            });
     });
 });
