@@ -83,46 +83,17 @@ Task.isValidInterval = function(interval, start_time, end_time) {
 
 Task.validateTimeVal = function(time_val) {
     var err_msg;
-    if ("number" != typeof time_val && !(time_val instanceof TimeObject)) {
+    if ("string" != typeof time_val && "number" != typeof time_val 
+                                    && !(time_val instanceof TimeObject)) {
         err_msg = ["Bad argument type: time value should be of type ",
                     "number or TimeObject. The argument of type ",
                     typeof time_val, "was passed."].join();
         throw new TypeError(err_msg);
     }
-    if ("number" == typeof time_val) {
+    if (!(time_val instanceof TimeObject)) {
         time_val = new TimeObject(time_val);
     }
     return time_val;
-};
-
-Task.prototype.findIndexForTask = function(tasks) {
-    if (0 == tasks.length) {
-        return 0;
-    }
-    var start_index = 0;
-    var end_index = tasks.length - 1;
-    var index_found = start_index;
-    var current_task;
-    var current_index;
-    var compare_result;
-    while (start_index < end_index) {
-        current_index = Math.floor((end_index - start_index) / 2);
-        index_found = current_index;
-        current_task = tasks[current_index];
-        compare_result = Task.compare(this, current_task);
-        if (0 == compare_result) {
-            break;
-        }
-        if (compare_result > 0) {
-            start_index = current_index + 1;
-            continue;
-        }
-        if (compare_result < 0) {
-            end_index = current_index - 1;
-            continue;
-        }
-    }
-    return index_found;
 };
 
 Task.prototype.setDataToEmpty = function() {
@@ -171,7 +142,7 @@ Task.prototype.setStartTime = function(start_time) {
                     'start times.'].join("")
     ];
     var is_valid_start_time;
-    start_time = validateTimeVal(start_time); 
+    start_time = Task.validateTimeVal(start_time); 
     Task.validateTriplet(this.interval, start_time, this.end_time, err_msgs); 
     this.start_time = start_time;
     return this;
@@ -186,7 +157,7 @@ Task.prototype.setEndTime = function(end_time) {
                     'start time.'].join("")
     ];
     end_time = Task.validateTimeVal(end_time);
-    Task.validateTriplet(this.interval, this.start_time, this.end_time);
+    Task.validateTriplet(this.interval, this.start_time, end_time);
     this.end_time = end_time;
     return this;
 };

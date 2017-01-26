@@ -213,4 +213,88 @@ describe('Task', function() {
                 }).to.throw(TypeError);
             });
     });
+
+    describe('setInterval', function() {
+        it('Should set consistent interval correctly.', function() {
+            var task = initFromTaskStoreObject(good_task_fields);
+            var new_interval = "15:00";
+            var time_interval = new TimeObject(new_interval);
+            task.setInterval(new_interval);
+            chai.assert.equal(0, task.interval.compareTo(time_interval));
+        });
+
+        it(['Should throw TypeError when trying to set ', 
+            'an inconsistent interval.'].join(""), function() {
+                var task = initFromTaskStoreObject(good_task_fields); 
+                var new_interval = "35:00";
+                var time_interval = new TimeObject(new_interval);
+                chai.expect(function() {
+                    task.setInterval(time_interval);
+                }).to.throw(TypeError);
+            });
+    });
+
+    describe('setStartTime', function() {
+        it('Should set consistent start time correctly.', function() {
+            var task = initFromTaskStoreObject(good_task_fields);
+            var new_start_time = "14:00:00";
+            var time_start_time = new TimeObject(new_start_time);
+            task.setStartTime(new_start_time);
+            chai.assert.equal(0, task.start_time.compareTo(time_start_time));
+        });
+
+        it(['Should throw TypeError when trying to set ', 
+            'the start time, greater than the end time.'].join(""), function() {
+                var task = initFromTaskStoreObject(good_task_fields); 
+                var new_start_time = "15:00:00";
+                var time_start_time = new TimeObject(new_start_time);
+                chai.expect(function() {
+                    task.setStartTime(time_start_time);
+                }).to.throw(TypeError);
+            });
+        
+        it(['Should throw TypeError when trying to set ', 
+            'the start time, so that task\'s duration becomes greater, ',
+            'than difference between end time and ',
+            'start time.'].join(""), function() {
+                var task = initFromTaskStoreObject(good_task_fields); 
+                var new_start_time = "14:35:00";
+                var time_start_time = new TimeObject(new_start_time);
+                chai.expect(function() {
+                    task.setStartTime(time_start_time);
+                }).to.throw(TypeError);
+            });
+    });
+
+    describe('setEndTime', function() {
+        it('Should set consistent end time correctly.', function() {
+            var task = initFromTaskStoreObject(good_task_fields);
+            var new_end_time = "15:00:00";
+            var time_end_time = new TimeObject(new_end_time);
+            task.setEndTime(new_end_time);
+            chai.assert.equal(0, task.end_time.compareTo(time_end_time));
+        });
+
+        it(['Should throw TypeError when trying to set ', 
+            'the end time, smaller than the end time.'].join(""), function() {
+                var task = initFromTaskStoreObject(good_task_fields); 
+                var new_end_time = "14:00:00";
+                var time_end_time = new TimeObject(new_end_time);
+                chai.expect(function() {
+                    task.setEndTime(time_end_time);
+                }).to.throw(TypeError);
+            });
+        
+        it(['Should throw TypeError when trying to set ', 
+            'the end time, so that task\'s duration becomes greater, ',
+            'than difference between end time and ',
+            'start time.'].join(""), function() {
+                var task = initFromTaskStoreObject(good_task_fields); 
+                var new_end_time = "14:35:00";
+                var time_end_time = new TimeObject(new_end_time);
+                chai.expect(function() {
+                    task.setEndTime(time_end_time);
+                }).to.throw(TypeError);
+            });
+    });
 });

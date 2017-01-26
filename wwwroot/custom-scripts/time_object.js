@@ -45,10 +45,17 @@ TimeObject.parseMsTime = function(time_val) {
 
 TimeObject.parseTimeString = function(time_string) {
     var time_parts = time_string.split(":");
+    var offset = 3;
+    var hours = time_parts.length - 3 >= 0 ? 
+                time_parts[time_parts.length - 3] : "0";
+    var minutes = time_parts.length - 2 >= 0 ? 
+                    time_parts[time_parts.length - 2] : "0";
+    var seconds = time_parts.length - 1 >= 0 ?
+                    time_parts[time_parts.length - 1] : "0";
     return {
-        h: parseInt(time_parts[0]),
-        m: parseInt(time_parts[1]),
-        s: parseInt(time_parts[2])
+        h: parseInt(hours),
+        m: parseInt(minutes),
+        s: parseInt(seconds)
     };
 };
 
