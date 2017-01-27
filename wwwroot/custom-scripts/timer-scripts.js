@@ -1,5 +1,4 @@
-var default_interval = new TimeObject("25:00");
-var current_timer_value = new TimeObject(default_interval.getTotalSeconds * 1000);
+var current_timer_value;
 var is_active = false;
 var is_stopped = false;
 var prev_clock_val;
@@ -10,6 +9,7 @@ var task_storage = {
     start_time: null,
     end_time: null
 };
+var previous_interval = new TimeObject(CONSTANTS.default_interval_str());
 
 var changeElementText;
 var startTimer;
@@ -34,20 +34,8 @@ saveStats = function() {
     saveCurrentTask();
 }
 
-// TODO: finish comment
-/** 
- * Saves current task in the localStorage as a stringified object.
- * 
- */
+// TODO:implement with indexdb 
 saveCurrentTask = function() {
-    var tasks;
-    if (!localStorage.timer_tasks) {
-        localStorage[local_storage_tasks_key] = JSON.stringify([]);
-    }
-    tasks = JSON.parse(localStorage[local_storage_tasks_key]);
-    tasks.push(current_task);
-    localStorage[local_storage_tasks_key] = JSON.stringify(tasks);
-    addToTable(current_task);
 }
 
 /**
@@ -65,7 +53,7 @@ changeElementText = function(text_to_set, el) {
  * and time. Sets the function {@link updateClock} to be run every 1000 milliseconds.
  */
 startTimer = function() {
-    prev_clock_val = new TimeObject(new Date().getTime());
+    prev_clock_val = new Date().getTime();
     task_storage.start_time = prev_clock_val;
     setTimeout(updateClock, 1000);
     timer_tick_id = setInterval(updateClock, 1000);
@@ -91,14 +79,15 @@ stopTimer = function() {
  * runs the function {@link finishTimer}.
  */
 updateClock = function() {
-    var current_clock_val = new TimeObject(new Date().getTime());
-    var time_elapsed = current_clock_val.sub(prev_clock_val);
-    current_timer_value = current_timer_value.sub(time_elapsed);
+    var current_clock_val = new Date().getTime();
+    var time_elapsed_ms = current_clock_val - prev_clock_val;
+    current_timer_value.setFromMsTime(
+                            current_timer_value.total_ms() - time_elapsed_ms);
     prev_clock_val = current_clock_val;
-    if (current_timer_value.getTotalSeconds() <= 0) {
+    if (current_timer_value.total_ms() <= 0) {
         finishTimer();
     }
-    setTimerDisplay();
+    setTimerDisplay(current_timer_value);
 }
 
 /**
@@ -108,19 +97,23 @@ updateClock = function() {
  */
 finishTimer = function() {
     task_storage.end_time = new TimeObject(new Date().getTime());
-    // TODO: continue
     stopTimer();
     playAlarmSound();
     saveStats();
-    current_timer_value = 0;
-    setTimerDisplay();
+    current_timer_value = new TimeObject(0);
+    setTimerDisplay(current_timer_value);
     return;
 }
 
 /** Change value on the timer display to the current timer value. */
-setTimerDisplay = function() {
-    changeElementText(current_timer_value.toString(), 
-                        $("#timer-display #timer-clock"));
+setTimerDisplay = function(time_obj) {
+    var err_msg;
+    if (!(time_obj instanceof TimeObject)) {
+        err_msg = ['Cannot set timer display: argument passed is not ', 
+                    'an instance of a TimeObject.'].join("");
+        throw new TypeError(err_msg);
+    }
+    changeElementText(time_obj.toString(), $("#timer-display #timer-clock"));
 }
 
 /** 
@@ -131,13 +124,15 @@ setTimerTask = function(task) {
     changeElementText(task, $("#timer-task"));
 }
 
-/** Stops the timer and sets it (along with the display) to the previous or default value. */
+/** 
+ * Stops the timer and sets it (along with the display) to the previous 
+ * or default value. */
 resetTimer = function() {
     stopTimer();
     is_active = false;
     is_stopped = false;
-    current_timer_value = default_interval;
-    setTimerDisplay();
+    current_timer_value = previous_interval;
+    setTimerDisplay(current_timer_value);
 }
 
 /** Plays sound of an alarm. Intended to be called when the time is up. */
@@ -148,8 +143,8 @@ playAlarmSound = function() {
 
 
 $(document).ready(function() {
-
-    setTimerDisplay();
+    current_timer_value = new TimeObject(CONSTANTS.default_interval_str());
+    setTimerDisplay(current_timer_value);
 
     $("#timer-start-btn").click(function() {
         if (is_active) {
