@@ -82,20 +82,31 @@ TimeObject.setFromParsed = function(time_object, parsed_time) {
     };
 };
 
-TimeObject.prototype.toString = function() {
-    
-    var addZeroIfNeeded = function(time_val) {
-        if (time_val >= 10) {
-            return time_val.toString();
-        }
-        return "0" + time_val.toString(); 
-    };
+TimeObject.addZeroIfNeeded = function(time_val) {
+    if (time_val >= 10) {
+        return time_val.toString();
+    }
+    return "0" + time_val.toString();
+};
 
-    var result_parts = [addZeroIfNeeded(this.hours()), 
-                        addZeroIfNeeded(this.minutes()), 
-                        addZeroIfNeeded(this.seconds())];
+TimeObject.getTimeString = function(hours, minutes, seconds) {
+    var result_parts = [TimeObject.addZeroIfNeeded(hours), 
+                        TimeObject.addZeroIfNeeded(minutes), 
+                        TimeObject.addZeroIfNeeded(seconds)];
     var result = result_parts.join(":");
     return result;
+};
+
+// TODO: add type verification
+TimeObject.msToString = function(time_ms) {
+    var parsed_time = TimeObject.parseMsTime(time_ms);
+    return TimeObject.getTimeString(parsed_time.h.toString(), 
+                    parsed_time.m.toString(), parsed_time.s.toString());
+};
+
+TimeObject.prototype.toString = function() {
+    return TimeObject.getTimeString(this.hours(). this.minutes(), 
+                                    this.seconds());
 };
 
 TimeObject.prototype.add = function(that) {

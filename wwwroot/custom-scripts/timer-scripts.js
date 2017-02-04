@@ -9,7 +9,8 @@ var task_storage = {
     start_time: null,
     end_time: null
 };
-var previous_interval = new TimeObject(CONSTANTS.default_interval_str());
+var update_rate = 1000;
+var previous_timer_value = CONSTANTS.default_interval();
 
 var changeElementText;
 var startTimer;
@@ -53,10 +54,11 @@ changeElementText = function(text_to_set, el) {
  * and time. Sets the function {@link updateClock} to be run every 1000 milliseconds.
  */
 startTimer = function() {
-    prev_clock_val = new Date().getTime();
-    task_storage.start_time = prev_clock_val;
-    setTimeout(updateClock, 1000);
-    timer_tick_id = setInterval(updateClock, 1000);
+    var current_time = new Date().valueOf();
+    task_storage.start_time = current_time;
+    current_timer_value.setCountingPoint(current_time); 
+    //setTimeout(updateClock, update_rate);
+    timer_tick_id = setInterval(updateClock, update_rate);
 }
 
 /**
@@ -70,6 +72,7 @@ stopTimer = function() {
     }
     clearInterval(timer_tick_id);
     is_active = false;
+    setTimerDisplay(current_timer_value);
 }
 
 /**
@@ -79,12 +82,8 @@ stopTimer = function() {
  * runs the function {@link finishTimer}.
  */
 updateClock = function() {
-    var current_clock_val = new Date().getTime();
-    var time_elapsed_ms = current_clock_val - prev_clock_val;
-    current_timer_value.setFromMsTime(
-                            current_timer_value.total_ms() - time_elapsed_ms);
-    prev_clock_val = current_clock_val;
-    if (current_timer_value.total_ms() <= 0) {
+    current_timer_value.countTimePassed(update_rate);
+    if (current_timer_value.isEllapsed()) {
         finishTimer();
     }
     setTimerDisplay(current_timer_value);
@@ -100,7 +99,7 @@ finishTimer = function() {
     stopTimer();
     playAlarmSound();
     saveStats();
-    current_timer_value = new TimeObject(0);
+    current_timer_value = new PreciseTime(0);
     setTimerDisplay(current_timer_value);
     return;
 }
@@ -108,12 +107,14 @@ finishTimer = function() {
 /** Change value on the timer display to the current timer value. */
 setTimerDisplay = function(time_obj) {
     var err_msg;
-    if (!(time_obj instanceof TimeObject)) {
+    var time_obj_str;
+    if (!(time_obj instanceof PreciseTime)) {
         err_msg = ['Cannot set timer display: argument passed is not ', 
-                    'an instance of a TimeObject.'].join("");
+                    'an instance of PreciseTime class.'].join("");
         throw new TypeError(err_msg);
     }
-    changeElementText(time_obj.toString(), $("#timer-display #timer-clock"));
+    time_obj_str = TimeObject.msToString(time_obj.time_ms);
+    changeElementText(time_obj_str, $("#timer-display #timer-clock"));
 }
 
 /** 
@@ -131,7 +132,7 @@ resetTimer = function() {
     stopTimer();
     is_active = false;
     is_stopped = false;
-    current_timer_value = previous_interval;
+    current_timer_value = new PreciseTime(CONSTANTS.default_interval());
     setTimerDisplay(current_timer_value);
 }
 
@@ -143,14 +144,14 @@ playAlarmSound = function() {
 
 
 $(document).ready(function() {
-    current_timer_value = new TimeObject(CONSTANTS.default_interval_str());
+    current_timer_value = new PreciseTime(CONSTANTS.default_interval());
     setTimerDisplay(current_timer_value);
 
     $("#timer-start-btn").click(function() {
         if (is_active) {
             return;
         }
-        if (current_timer_value.total_seconds <= 0) {
+        if (current_timer_value.isEllapsed()) {
             return;
         }
         is_active = true;
