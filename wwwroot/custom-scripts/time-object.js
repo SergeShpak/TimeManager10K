@@ -74,12 +74,17 @@ TimeObject.setFromParsed = function(time_object, parsed_time) {
     time_object.hours = function() { return parsed_time.h; };
     time_object.minutes = function() { return parsed_time.m; };
     time_object.seconds = function() { return parsed_time.s; };
-    ms_time = (time_object.hours() * 3600 + time_object.minutes() * 60 + 
-                time_object.seconds()) * 1000
-
+    
+    ms_time = TimeObject.getMsFromParsed(parsed_time);
     time_object.total_ms = function () {
         return ms_time;
     };
+};
+
+TimeObject.getMsFromParsed = function(parsed_time) {
+    var ms_time = (parsed_time.h * 3600 + parsed_time.m * 60 + 
+                parsed_time.s) * 1000;
+    return ms_time;
 };
 
 TimeObject.addZeroIfNeeded = function(time_val) {

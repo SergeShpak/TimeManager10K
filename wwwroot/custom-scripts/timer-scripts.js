@@ -108,9 +108,9 @@ finishTimer = function() {
 setTimerDisplay = function(time_obj) {
     var err_msg;
     var time_obj_str;
-    if (!(time_obj instanceof PreciseTime)) {
-        err_msg = ['Cannot set timer display: argument passed is not ', 
-                    'an instance of PreciseTime class.'].join("");
+    if ( !(time_obj instanceof PreciseTime)) {
+        err_msg = ['Cannot set timer display: argument passed should be an ', 
+                    'instance of PreciseTime class.'].join("");
         throw new TypeError(err_msg);
     }
     time_obj_str = TimeObject.msToString(time_obj.time_ms);
