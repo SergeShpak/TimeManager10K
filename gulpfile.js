@@ -23,9 +23,10 @@ var paths = {
     concatJsDest: webroot + "js/site.min.js",
     concatCssDest: webroot + "css/site.min.css",
     bowerJsDest: webroot + "js/bower.min.js",
+    bowerCssDest: webroot + "css/bower.min.css",
     customJsDest: webroot + "js/custom-scripts.min.js",
     bootstrapCssDest: webroot + "css",
-    fontsDir: webroot + "fonts"
+    fontsDir: webroot + "fonts",
 };
 
 gulp.task("clean:js", function (cb) {
@@ -48,7 +49,8 @@ gulp.task("clean:bootstrap-css", function(cb) {
     rimraf(paths.bootstrapCssDest, cb);
 });
 
-gulp.task("clean", ["clean:js", "clean:css", "clean:site-scripts", "clean:bower-scripts", "clean:bootstrap-css"]);
+gulp.task("clean", ["clean:js", "clean:css", "clean:site-scripts", 
+                    "clean:bower-scripts", "clean:bootstrap-css"]);
 
 gulp.task("min:js", function () {
     return gulp.src([paths.js, "!" + paths.minJs], { base: "." })
@@ -79,6 +81,14 @@ gulp.task("min:bowerJs", function() {
         .pipe(gulp.dest("."));
 });
 
+gulp.task("min:bowerCss", function() {
+    return gulp.src(mainBowerFiles())
+        .pipe(filter("**/*.css"))
+        .pipe(concat(paths.bowerCssDest))
+        .pipe(cssmin())
+        .pipe(gulp.dest("."));
+});
+
 gulp.task("min:bowerBootstrapLess", function() {
     return gulp.src(mainBowerFiles())
         .pipe(filter("**/bootstrap.less"))
@@ -90,7 +100,8 @@ gulp.task("min:bowerBootstrapLess", function() {
         .pipe(gulp.dest(paths.bootstrapCssDest));
 });
 
-gulp.task("min", ["min:js", "min:css", "min:site-scripts", "min:bowerJs", "min:bowerBootstrapLess"]);
+gulp.task("min", ["min:js", "min:css", "min:site-scripts", "min:bowerJs", 
+                "min:bowerCss", "min:bowerBootstrapLess"]);
 
 gulp.task("bfonts", function() {
     return gulp.src(webroot + "lib/bootstrap/dist/fonts/*")

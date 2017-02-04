@@ -44,3 +44,7 @@ body {
 #tasks-expand-btn {
     margin-right: 0;
 }
+
+.input-invalid {
+    border: 1px solid red;
+};

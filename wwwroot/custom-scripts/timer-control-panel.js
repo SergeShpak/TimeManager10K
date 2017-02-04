@@ -2,16 +2,32 @@ var control_panel_values = {
     task: null,
     time_string: null,
 };
-var current_task = {
-    n: null,
-    i: null,
-    s: null,
-    e: null
-};
+var alert_duration = 3000;
+var is_error_anounced = false;
+var error_show_id;
 
 var storeControlPanelValues;
 var getInputText;
 var setTimerValue;
+var setInputBoxToAlert;
+
+toastr.options = {
+    "closeButton": true,
+    "debug": false,
+    "newestOnTop": false,
+    "progressBar": false,
+    "positionClass": "toast-top-right",
+    "preventDuplicates": false,
+    "onclick": null,
+    "showDuration": "300",
+    "hideDuration": "1000",
+    "timeOut": alert_duration,
+    "extendedTimeOut": "1000",
+    "showEasing": "swing",
+    "hideEasing": "linear",
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+};
 
 /**
  * Stores user values from the control panel in the control_panel_values object.
@@ -47,6 +63,53 @@ setTimerValue = function(parsed_time_obj) {
     setTimerDisplay(current_timer_value);
 }
 
+alertUserOnTimeValidation = function() {
+    var toast_msg = "Hmm... something's wrong with the time";
+    toastr.error(toast_msg);
+    setInputBoxToAlert();
+};
+
+setInputBoxToAlert = function() {
+    var task_time_input = document.getElementById("task-time-input");
+    var border_size = 0;
+    var style_template = "px solid red";
+    var interval_set = false;
+    var turnOnErrorState = function() {
+        is_error_anounced = true;
+        if (border_size > 3) {
+            clearInterval(error_show_id);
+            return;
+        }
+        console.log("Border size " + border_size);
+        border_size++;
+        task_time_input.style.border = border_size.toString() + style_template;
+    };
+    var turnOffErrorState = function() {
+        // This is the case if user has focused on the task time input
+        if (!is_error_anounced) {
+            return;
+        }
+        if (border_size <= 0) {
+            task_time_input.style.border = "";
+            clearInterval(error_show_id);
+            is_error_anounced = false;
+            return;
+        }
+        console.log("Border size " + border_size);
+        border_size--;
+        task_time_input.style.border = border_size.toString() + style_template;
+        // This is for the mechanism of sequential setTimeour and 
+        // setInterval activations
+        if (!interval_set) {
+            console.log("setting interval");
+            error_show_id = setInterval(turnOffErrorState, 10);
+            interval_set = true;
+        }
+    };
+    var error_show_id = setInterval(turnOnErrorState, 20);
+    setTimeout(turnOffErrorState, alert_duration - 20);
+};
+
 
 $(document).ready(function() {
 
@@ -55,18 +118,28 @@ $(document).ready(function() {
         var is_input_valid;
         resetTimer();
         storeControlPanelValues();
-        current_task.n = control_panel_values.task;
+        task_storage.n = control_panel_values.task;
         is_input_valid = 
                 TimeObject.isValidTimeString(control_panel_values.time_string);
         if (!is_input_valid) {
-            // TODO: add error message
+            if (is_error_anounced) {
+                return;
+            }
+            alertUserOnTimeValidation();
             return;
         }
         parsed_time = 
             TimeObject.parseTimeString(control_panel_values.time_string);
         setTimerValue(parsed_time);
         setTimerTask(control_panel_values.task);
-        current_task.i = current_timer_value;
+        task_storage.i = current_timer_value.time_ms;
+        previous_timer_value = current_timer_value.time_ms;
+    });
+
+    $("#task-time-input").focus(function() {
+        clearInterval(error_show_id);
+        this.style.border = "";
+        is_error_anounced = false;
     });
 
 });

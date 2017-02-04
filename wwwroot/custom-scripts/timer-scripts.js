@@ -57,7 +57,6 @@ startTimer = function() {
     var current_time = new Date().valueOf();
     task_storage.start_time = current_time;
     current_timer_value.setCountingPoint(current_time); 
-    //setTimeout(updateClock, update_rate);
     timer_tick_id = setInterval(updateClock, update_rate);
 }
 
@@ -132,7 +131,7 @@ resetTimer = function() {
     stopTimer();
     is_active = false;
     is_stopped = false;
-    current_timer_value = new PreciseTime(CONSTANTS.default_interval());
+    current_timer_value = new PreciseTime(previous_timer_value);
     setTimerDisplay(current_timer_value);
 }
 
