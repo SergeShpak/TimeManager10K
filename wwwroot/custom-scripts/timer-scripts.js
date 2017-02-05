@@ -3,12 +3,7 @@ var is_active = false;
 var is_stopped = false;
 var prev_clock_val;
 var timer_tick_id;
-var task_storage = {
-    name: null,
-    iterval: null,
-    start_time: null,
-    end_time: null
-};
+var task_storage;
 var update_rate = 1000;
 var previous_timer_value = CONSTANTS.default_interval();
 
@@ -22,7 +17,7 @@ var generateTimerString;
 var addZeroIfNeeded;
 var setTimerTask;
 var playAlarmSound;
-var saveStats;
+var saveTask;
 var saveCurrentTask;
 var finishTimer;
 var getInaccurateTimeObject;
@@ -31,7 +26,7 @@ var getInaccurateTimeObject;
  * Saves all the relevant information of the passed timer period:
  * calls {@link saveCurrentTask}.
  */
-saveStats = function() {
+saveTask = function() {
     saveCurrentTask();
 }
 
@@ -51,11 +46,15 @@ changeElementText = function(text_to_set, el) {
 
 /**
  * Sets the start date and time of the current task to the current date
- * and time. Sets the function {@link updateClock} to be run every 1000 milliseconds.
+ * and time. Sets the function {@link updateClock} to be run every 
+ * 1000 milliseconds.
  */
 startTimer = function() {
     var current_time = new Date().valueOf();
-    task_storage.start_time = current_time;
+    if (!is_stopped) {
+        task_storage.setStartTime(current_time);
+        task_storage.setInterval(current_timer_value.time_ms);
+    }
     current_timer_value.setCountingPoint(current_time); 
     timer_tick_id = setInterval(updateClock, update_rate);
 }
@@ -94,12 +93,14 @@ updateClock = function() {
  * Sets current timer value to zero and outputs it to the timer's display.
  */
 finishTimer = function() {
-    task_storage.end_time = new TimeObject(new Date().getTime());
+    task_storage.setEndTime(new Date().valueOf());
     stopTimer();
     playAlarmSound();
-    saveStats();
+    saveTask();
     current_timer_value = new PreciseTime(0);
     setTimerDisplay(current_timer_value);
+    console.log(task_storage.toString());
+    task_storage.setDataToEmpty();
     return;
 }
 
@@ -131,6 +132,7 @@ resetTimer = function() {
     stopTimer();
     is_active = false;
     is_stopped = false;
+    task_storage.setDataToEmpty();
     current_timer_value = new PreciseTime(previous_timer_value);
     setTimerDisplay(current_timer_value);
 }
@@ -143,6 +145,7 @@ playAlarmSound = function() {
 
 
 $(document).ready(function() {
+    task_storage = new Task();
     current_timer_value = new PreciseTime(CONSTANTS.default_interval());
     setTimerDisplay(current_timer_value);
 

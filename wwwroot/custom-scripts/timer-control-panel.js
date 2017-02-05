@@ -10,6 +10,7 @@ var storeControlPanelValues;
 var getInputText;
 var setTimerValue;
 var setInputBoxToAlert;
+var alertUserOnTimeValidation;
 
 toastr.options = {
     "closeButton": true,
@@ -58,13 +59,12 @@ getInputText = function(input_selector) {
  */
 setTimerValue = function(parsed_time_obj) {
     var time_ms = TimeObject.getMsFromParsed(parsed_time_obj);
-    current_timer_value = new PreciseTime(time_ms);
-    default_interval = current_timer_value;
+    current_timer_value = new PreciseTime(time_ms); 
     setTimerDisplay(current_timer_value);
-}
+};
 
 alertUserOnTimeValidation = function() {
-    var toast_msg = "Hmm... something's wrong with the time";
+    var toast_msg = "Time should be formatted as hh:mm:ss";
     toastr.error(toast_msg);
     setInputBoxToAlert();
 };
@@ -80,7 +80,6 @@ setInputBoxToAlert = function() {
             clearInterval(error_show_id);
             return;
         }
-        console.log("Border size " + border_size);
         border_size++;
         task_time_input.style.border = border_size.toString() + style_template;
     };
@@ -95,13 +94,11 @@ setInputBoxToAlert = function() {
             is_error_anounced = false;
             return;
         }
-        console.log("Border size " + border_size);
         border_size--;
         task_time_input.style.border = border_size.toString() + style_template;
         // This is for the mechanism of sequential setTimeour and 
         // setInterval activations
         if (!interval_set) {
-            console.log("setting interval");
             error_show_id = setInterval(turnOffErrorState, 10);
             interval_set = true;
         }
@@ -116,23 +113,29 @@ $(document).ready(function() {
     $("#task-set-btn").click(function() {
         var parsed_time;
         var is_input_valid;
+        var time_value_to_use;
+        var input_time_val;
         resetTimer();
         storeControlPanelValues();
-        task_storage.n = control_panel_values.task;
-        is_input_valid = 
+        task_storage.setName(control_panel_values.task);
+        if (control_panel_values.time_string) {
+            is_input_valid = 
                 TimeObject.isValidTimeString(control_panel_values.time_string);
-        if (!is_input_valid) {
-            if (is_error_anounced) {
+            if (!is_input_valid) {
+                if (is_error_anounced) {
+                    return;
+                }
+                alertUserOnTimeValidation();
                 return;
             }
-            alertUserOnTimeValidation();
-            return;
         }
-        parsed_time = 
-            TimeObject.parseTimeString(control_panel_values.time_string);
+        input_time_val = control_panel_values.time_string;
+        parsed_time = input_time_val ? 
+                        TimeObject.parseTimeString(input_time_val) : 
+                        TimeObject.parseMsTime(previous_timer_value); 
         setTimerValue(parsed_time);
         setTimerTask(control_panel_values.task);
-        task_storage.i = current_timer_value.time_ms;
+        task_storage.setInterval(current_timer_value.time_ms);
         previous_timer_value = current_timer_value.time_ms;
     });
 

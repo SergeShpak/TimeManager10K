@@ -87,7 +87,7 @@ Task.validateTimeVal = function(time_val) {
                                     && !(time_val instanceof TimeObject)) {
         err_msg = ["Bad argument type: time value should be of type ",
                     "number or TimeObject. The argument of type ",
-                    typeof time_val, "was passed."].join();
+                    typeof time_val, "was passed."].join("");
         throw new TypeError(err_msg);
     }
     if (!(time_val instanceof TimeObject)) {
@@ -107,7 +107,7 @@ Task.prototype.setName = function(name) {
     var err_msg;
     if ("string" != typeof name) {
         err_msg = ["Bad type of the argument passed: expected string, ",
-                    "received ", typeof name].join();
+                    "received ", typeof name].join("");
         throw new TypeError(err_msg);
     }
     this.name = name;
@@ -181,3 +181,16 @@ Task.prototype.compare = function(that) {
     return interval_comparison || this.name.localeCompare(that.name)
             || -start_time_comparison || -end_time_comparison;
 };
+
+Task.prototype.toString = function() {
+    var repr_parts = [];
+    var repr_string;
+    var result;
+    repr_parts.push("Name: " + this.name);
+    repr_parts.push("Interval: " + this.interval.toString());
+    repr_parts.push("Start: " + this.start_time.toString());
+    repr_parts.push("End: " + this.end_time.toString());
+    repr_string = repr_parts.join(", ");
+    result = ["{ ", repr_string, " }"].join("");
+    return result;
+}

@@ -71,7 +71,8 @@ TimeObject.compare = function(first, second) {
 
 TimeObject.setFromParsed = function(time_object, parsed_time) {
     var ms_time;
-    time_object.hours = function() { return parsed_time.h; };
+    time_object.hours = function() { 
+        return parsed_time.h; };
     time_object.minutes = function() { return parsed_time.m; };
     time_object.seconds = function() { return parsed_time.s; };
     
@@ -110,7 +111,7 @@ TimeObject.msToString = function(time_ms) {
 };
 
 TimeObject.prototype.toString = function() {
-    return TimeObject.getTimeString(this.hours(). this.minutes(), 
+    return TimeObject.getTimeString(this.hours(), this.minutes(), 
                                     this.seconds());
 };
 
